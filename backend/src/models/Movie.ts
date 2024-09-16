@@ -17,6 +17,7 @@ interface MovieAttributes {
   profanity?: string;
   alcohol?: string;
   frightening?: string;
+  description?: string;
 }
 
 class Movie extends Model<MovieAttributes> implements MovieAttributes {
@@ -35,6 +36,7 @@ class Movie extends Model<MovieAttributes> implements MovieAttributes {
   public profanity?: string;
   public alcohol?: string;
   public frightening?: string;
+  public description?: string;
 }
 
 const MovieModel = (sequelize: Sequelize) => {
@@ -99,6 +101,10 @@ const MovieModel = (sequelize: Sequelize) => {
       },
       frightening: {
         type: DataTypes.STRING,
+        allowNull: true,
+      },
+      description: {
+        type: DataTypes.TEXT,
         allowNull: true,
       },
     },

@@ -9,7 +9,7 @@ interface userPayload {
 declare module "express-serve-static-core" {
   //inclusing user in request interface
   interface Request {
-    user?: userPayload;
+    user: userPayload;
   }
 }
 

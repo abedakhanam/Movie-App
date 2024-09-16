@@ -5,7 +5,7 @@ interface ReviewAttributes {
   reviewID?: number;
   userID: number;
   movieID: number;
-  rating: number;
+  rating?: number;
   review?: string;
   createdAt?: Date;
 }
@@ -14,7 +14,7 @@ class Review extends Model<ReviewAttributes> implements ReviewAttributes {
   public reviewID!: number;
   public userID!: number;
   public movieID!: number;
-  public rating!: number;
+  public rating?: number;
   public review?: string | undefined;
   public createdAt?: Date | undefined;
 }
@@ -45,7 +45,7 @@ const ReviewModel = (sequelize: Sequelize) => {
       },
       rating: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
         // validate: {
         //   min: 1,
         //   max: 10,
