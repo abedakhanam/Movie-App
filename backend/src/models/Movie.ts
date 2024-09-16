@@ -4,39 +4,39 @@ import { Sequelize, DataTypes, Model } from "sequelize";
 interface MovieAttributes {
   movieID?: number;
   name: string;
-  releaseYear: number;
-  rating?: number;
-  thumbnailUrl?: string;
-  votes?: number;
-  duration?: number;
-  type?: string;
-  certificate?: string;
-  episodes?: number;
-  nudity?: string;
-  violence?: string;
-  profanity?: string;
-  alcohol?: string;
-  frightening?: string;
-  description?: string;
+  releaseYear: number | null;
+  rating?: number | null;
+  thumbnailUrl?: string | null;
+  votes?: number | null;
+  duration?: number | null;
+  type?: string | null;
+  certificate?: string | null;
+  episodes?: number | null;
+  nudity?: string | null;
+  violence?: string | null;
+  profanity?: string | null;
+  alcohol?: string | null;
+  frightening?: string | null;
+  description?: string | null;
 }
 
 class Movie extends Model<MovieAttributes> implements MovieAttributes {
   public movieID!: number;
   public name!: string;
-  public releaseYear!: number;
-  public rating?: number;
-  public thumbnailUrl?: string;
-  public votes?: number;
-  public duration?: number;
-  public type?: string;
-  public certificate?: string;
-  public episodes?: number;
-  public nudity?: string;
-  public violence?: string;
-  public profanity?: string;
-  public alcohol?: string;
-  public frightening?: string;
-  public description?: string;
+  public releaseYear!: number | null;
+  public rating?: number | null;
+  public thumbnailUrl?: string | null;
+  public votes?: number | null;
+  public duration?: number | null;
+  public type?: string | null;
+  public certificate?: string | null;
+  public episodes?: number | null;
+  public nudity?: string | null;
+  public violence?: string | null;
+  public profanity?: string | null;
+  public alcohol?: string | null;
+  public frightening?: string | null;
+  public description?: string | null;
 }
 
 const MovieModel = (sequelize: Sequelize) => {
