@@ -5,6 +5,7 @@ import MovieModel from "../models/Movie";
 import GenreModel from "../models/Genre";
 import MovieGenreModel from "../models/MovieGenre";
 import ReviewModel from "../models/Review";
+import WatchListModel from "../models/WatchList";
 
 const sequelize = new Sequelize("moviewebapp", "mysqlclient", "admin", {
   host: "localhost",
@@ -16,6 +17,7 @@ const Movie = MovieModel(sequelize);
 const Genre = GenreModel(sequelize);
 const MovieGenre = MovieGenreModel(sequelize);
 const Review = ReviewModel(sequelize);
+const WatchList = WatchListModel(sequelize);
 
 Movie.belongsToMany(Genre, { through: MovieGenre, foreignKey: "movieID" });
 Genre.belongsToMany(Movie, { through: MovieGenre, foreignKey: "genreID" });
@@ -25,6 +27,9 @@ Review.belongsTo(User, { foreignKey: "userID" });
 
 Movie.hasMany(Review, { foreignKey: "movieID" });
 Review.belongsTo(Movie, { foreignKey: "movieID" });
+
+User.belongsToMany(Movie, { through: WatchList, foreignKey: "userID" });
+Movie.belongsToMany(User, { through: WatchList, foreignKey: "movieID" });
 
 // const createTestData = async () => {
 //   try {
@@ -55,4 +60,4 @@ Review.belongsTo(Movie, { foreignKey: "movieID" });
 // createTestData();
 
 export default sequelize;
-export { User, Movie, Genre };
+export { User, Movie, Genre, MovieGenre, Review, WatchList };
