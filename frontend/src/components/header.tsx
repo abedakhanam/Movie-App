@@ -10,6 +10,10 @@ const navLinks = [
     href: "register",
     label: "SignUp",
   },
+  {
+    href: "logout",
+    label: "Logout",
+  }, //need to implement
 ];
 
 export default function Header() {
