@@ -1,5 +1,4 @@
 "use client";
-import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -23,12 +22,14 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/users/login",
-        formData,
-        { withCredentials: true }
-      );
-      console.log("Login successful:", response.data);
+      const response = await fetch("http://localhost:5000/api/users/login", {
+        method: "POST",
+        body: JSON.stringify(formData),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log("Login successful:", JSON.stringify(response));
       router.push("/");
     } catch (error) {
       setError("Login failed. Please check your username or password.");

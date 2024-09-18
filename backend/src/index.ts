@@ -9,7 +9,16 @@ const cors = require("cors");
 dotenv.config();
 
 const app = express();
-app.use(cors());
+// app.use(cors());
+
+// CORS options
+// const corsOptions = {
+//   origin: "http://localhost:3000", // Specify your frontend's origin
+//   credentials: true, // Allow credentials like cookies
+// };
+
+app.use(cors({ origin: "http://localhost:3000" }));
+
 app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api", movieRoutes);
