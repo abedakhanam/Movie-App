@@ -1,11 +1,16 @@
 "use client";
+import { AppDispatch } from "@/store/store";
+import { login } from "@/store/userSlice";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
 
 export default function LoginPage() {
   const router = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
   const [formData, setFormData] = useState({
-    username: "",
+    email: "",
     password: "",
   });
   const [error, setError] = useState<string | null>(null);
@@ -22,17 +27,38 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     try {
-      const response = await fetch("http://localhost:5000/api/users/login", {
-        method: "POST",
-        body: JSON.stringify(formData),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-      console.log("Login successful:", JSON.stringify(response));
-      router.push("/");
+      const response = await axios.post(
+        "http://localhost:5000/api/users/login",
+        formData, // Automatically stringifies and sends as JSON
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true, // Allows sending cookies if needed
+        }
+      );
+      if (!response) {
+        console.log("no response");
+      } else {
+        const { userID, firstName, lastName, token, email } = response.data;
+        console.log(response.data);
+        console.log("Login successful email:", email);
+        console.log("Login successful userID:", userID);
+        // Dispatch the login action
+        dispatch(
+          login({
+            userID,
+            firstName,
+            lastName,
+            token,
+            email,
+          })
+        );
+        // console.log("Login successful:", response.data);
+        router.push("/");
+      }
     } catch (error) {
-      setError("Login failed. Please check your username or password.");
+      setError("Login failed. Please check your email or password.");
     }
   };
   return (
@@ -45,16 +71,16 @@ export default function LoginPage() {
       >
         <div className="mb-4">
           <label
-            htmlFor="username"
+            htmlFor="email"
             className="block text-gray-700 text-sm font-bold mb-2"
           >
-            Username
+            Email
           </label>
           <input
-            id="username"
-            name="username"
+            id="email"
+            name="email"
             type="text"
-            value={formData.username}
+            value={formData.email}
             onChange={handleChange}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />

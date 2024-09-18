@@ -8,9 +8,6 @@ import { z } from "zod";
 const registrationSchema = z.object({
   firstName: z.string().min(1, { message: "First name is required" }),
   lastName: z.string().min(1, { message: "Last name is required" }),
-  username: z
-    .string()
-    .min(3, { message: "Username must be at least 3 characters" }),
   email: z.string().email({ message: "Invalid email address" }),
   password: z
     .string()
@@ -22,7 +19,6 @@ export default function RegisterPage() {
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
-    username: "",
     email: "",
     password: "",
   });
@@ -119,30 +115,6 @@ export default function RegisterPage() {
           {validationErrors.lastName && (
             <p className="text-red-500 text-xs italic">
               {validationErrors.lastName}
-            </p>
-          )}
-        </div>
-
-        <div className="mb-4">
-          <label
-            htmlFor="username"
-            className="block text-gray-700 text-sm font-bold mb-2"
-          >
-            Username
-          </label>
-          <input
-            id="username"
-            name="username"
-            type="text"
-            value={formData.username}
-            onChange={handleChange}
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
-              validationErrors.username ? "border-red-500" : ""
-            }`}
-          />
-          {validationErrors.username && (
-            <p className="text-red-500 text-xs italic">
-              {validationErrors.username}
             </p>
           )}
         </div>

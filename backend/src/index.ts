@@ -3,21 +3,14 @@ import dotenv from "dotenv";
 import sequelize from "./config/database";
 import userRoutes from "./routes/userRoutes";
 import movieRoutes from "./routes/movieRoutes";
-const cors = require("cors");
+import cors from "cors";
 // const bodyParser = require("body-parser");
 
 dotenv.config();
 
 const app = express();
-// app.use(cors());
 
-// CORS options
-// const corsOptions = {
-//   origin: "http://localhost:3000", // Specify your frontend's origin
-//   credentials: true, // Allow credentials like cookies
-// };
-
-app.use(cors({ origin: "http://localhost:3000" }));
+app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 
 app.use(express.json());
 app.use("/api/users", userRoutes);

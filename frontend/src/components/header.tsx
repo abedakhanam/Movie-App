@@ -1,5 +1,7 @@
+import { RootState } from "@/store/store";
 import Image from "next/image";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 
 const navLinks = [
   {
@@ -10,13 +12,24 @@ const navLinks = [
     href: "register",
     label: "SignUp",
   },
+];
+
+const navUserLinks = [
+  {
+    href: "watchlist",
+    label: "WatchList",
+  },
   {
     href: "logout",
     label: "Logout",
-  }, //need to implement
+  },
 ];
 
 export default function Header() {
+  const isAuthenticated = useSelector(
+    (state: RootState) => state.user.isAuthenticated
+  );
+  const firstName = useSelector((state: RootState) => state.user.firstName); //setup for profile
   return (
     <header className="flex justify-between items-center py-4 px-7 border-b bg-customRed">
       <Link href="/">
@@ -30,16 +43,39 @@ export default function Header() {
       </Link>
       <nav>
         <ul className="flex gap-x-5 text-white text-[14px]">
-          {navLinks.map((link) => (
-            <li key={link.href}>
-              <Link
-                href={link.href}
-                className="hover:bg-white hover:text-black p-2"
-              >
-                {link.label}
-              </Link>
-            </li>
-          ))}
+          {isAuthenticated ? (
+            <>
+              <li key="profile">
+                <Link
+                  href="profile"
+                  className="hover:bg-white hover:text-black p-2"
+                >
+                  {firstName}'s profile
+                </Link>
+              </li>
+              {navUserLinks.map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="hover:bg-white hover:text-black p-2"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </>
+          ) : (
+            navLinks.map((link) => (
+              <li key={link.href}>
+                <Link
+                  href={link.href}
+                  className="hover:bg-white hover:text-black p-2"
+                >
+                  {link.label}
+                </Link>
+              </li>
+            ))
+          )}
         </ul>
       </nav>
     </header>

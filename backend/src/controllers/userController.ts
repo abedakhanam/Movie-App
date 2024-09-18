@@ -60,9 +60,9 @@ const login = async (req: Request, res: Response) => {
 
   try {
     //fetching from db
-    const user = await User.findOne({ where: { email} });
+    const user = await User.findOne({ where: { email } });
     if (!user)
-      return res.status(400).json({ message: "email doesnt exists" });
+      return res.status(400).json({ message: "Incorrect email address" });
 
     //compare pass
     const isMatch = await bcrypt.compare(password, user.password);
@@ -70,41 +70,27 @@ const login = async (req: Request, res: Response) => {
     if (!isMatch)
       return res.status(401).json({ message: "invalid credentials" });
 
-    const accessToken = generateToken(
-      { userID: user.userID },
-      "15m",
-      process.env.ACCESS_TOKEN_SECRET!
-    );
-    // console.log(userAccessToken);
-
-    const refreshToken = generateToken(
-      { userID: user.userID },
-      "7d",
-      process.env.REFRESH_TOKEN_SECRET!
-    );
-
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-      maxAge: 7 * 24 * 60 * 60 * 1000, //7
+    const token = generateToken({ id: user.userID.toString() }, "30d");
+    res.send({
+      userID: user.userID,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      token: token,
+      email: user.email,
+      createAt: user.createdAt,
     });
-
-    // return res.json(accessToken);
-    // console.log(accessToken)
-    return res.status(200).json({ accessToken });
   } catch (error) {
     res.status(500).json({ error: "Loging error" });
   }
 };
 
-const logout = async (req: Request, res: Response) => {
-  res.clearCookie("refreshToken", {
-    httpOnly: true,
-    secure: true,
-    sameSite: "none",
-  });
-  return res.status(200).json({ message: "User logges out successfully" });
-};
+// const logout = async (req: Request, res: Response) => {
+//   res.clearCookie("refreshToken", {
+//     httpOnly: true,
+//     secure: true,
+//     sameSite: "none",
+//   });
+//   return res.status(200).json({ message: "User logges out successfully" });
+// };
 
-export { register, login, logout };
+export { register, login};
