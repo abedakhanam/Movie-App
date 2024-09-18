@@ -3,7 +3,6 @@ import jwt from "jsonwebtoken";
 
 interface userPayload {
   userID: string;
-  username: string;
 }
 
 declare module "express-serve-static-core" {

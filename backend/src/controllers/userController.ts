@@ -1,16 +1,16 @@
 import { User } from "../config/database";
 import { Request, Response } from "express";
-import userSchema from "../helpers/userValidation";
+import userSchema, { validateUsername } from "../helpers/userValidation";
 import bcrypt from "bcryptjs";
 import generateToken from "../helpers/tokens";
 
 const register = async (req: Request, res: Response) => {
-  let { firstName, lastName, username, email, password } = req.body;
+  let { firstName, lastName, email, password } = req.body;
 
+  //validation
   const validation = userSchema.safeParse({
     firstName,
     lastName,
-    username,
     email,
     password,
   });
@@ -21,6 +21,9 @@ const register = async (req: Request, res: Response) => {
       errors: validation.error.format(),
     });
   }
+
+  let tempUsername = firstName + lastName;
+  let newUsername = await validateUsername(tempUsername);
 
   try {
     //hash
@@ -36,7 +39,7 @@ const register = async (req: Request, res: Response) => {
     const user = await User.create({
       firstName,
       lastName,
-      username,
+      username: newUsername,
       email,
       password: hashPassword,
     });
@@ -49,17 +52,17 @@ const register = async (req: Request, res: Response) => {
 };
 
 const login = async (req: Request, res: Response) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!username || !password) {
+  if (!email || !password) {
     return res.status(400).json({ message: "all fields required" });
   }
 
   try {
     //fetching from db
-    const user = await User.findOne({ where: { username } });
+    const user = await User.findOne({ where: { email} });
     if (!user)
-      return res.status(400).json({ message: "username doesnt exists" });
+      return res.status(400).json({ message: "email doesnt exists" });
 
     //compare pass
     const isMatch = await bcrypt.compare(password, user.password);
@@ -68,14 +71,14 @@ const login = async (req: Request, res: Response) => {
       return res.status(401).json({ message: "invalid credentials" });
 
     const accessToken = generateToken(
-      { userID: user.userID, username: user.username },
+      { userID: user.userID },
       "15m",
       process.env.ACCESS_TOKEN_SECRET!
     );
     // console.log(userAccessToken);
 
     const refreshToken = generateToken(
-      { userID: user.userID, username: user.username },
+      { userID: user.userID },
       "7d",
       process.env.REFRESH_TOKEN_SECRET!
     );
