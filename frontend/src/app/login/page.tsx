@@ -42,8 +42,7 @@ export default function LoginPage() {
       } else {
         const { userID, firstName, lastName, token, email } = response.data;
         console.log(response.data);
-        console.log("Login successful email:", email);
-        console.log("Login successful userID:", userID);
+        
         // Dispatch the login action
         dispatch(
           login({

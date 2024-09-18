@@ -10,7 +10,7 @@ const config: Config = {
     extend: {
       colors: {
         customRed: "rgb(250,50,10)", // Example of RGB
-        customBlue: "rgb(30, 144, 255)",
+        customDarkRed: "rgb(150,30,6)",
         customGreen: "rgb(0, 128, 0)",
       },
     },

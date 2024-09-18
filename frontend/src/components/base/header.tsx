@@ -41,6 +41,23 @@ export default function Header() {
           height="50"
         />
       </Link>
+
+      {/* Search Form */}
+      <form className="relative mx-5">
+        <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
+          <img
+            src="/svg/search.svg"
+            alt="Search"
+            className="w-4 h-4"
+          />
+        </span>
+        <input
+          type="text"
+          placeholder="Search"
+          className="bg-customDarkRed text-white pl-10 pr-4 py-2 border rounded-xl w-[200px] sm:w-[300px] focus:outline-none"
+        />
+      </form>
+
       <nav>
         <ul className="flex gap-x-5 text-white text-[14px]">
           {isAuthenticated ? (
