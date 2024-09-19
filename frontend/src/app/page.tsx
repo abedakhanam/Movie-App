@@ -23,14 +23,14 @@ const ratings = [
 ];
 
 const type = [
-  { label: "5 Stars", value: "5" },
-  { label: "4 Stars", value: "4" },
+  { label: "Type 1", value: "type1" },
+  { label: "Type 2", value: "type2" },
   // Add more ratings
 ];
 
 const certificate = [
-  { label: "5 Stars", value: "5" },
-  { label: "4 Stars", value: "4" },
+  { label: "Certificate 1", value: "cert1" },
+  { label: "Certificate 2", value: "cert2" },
   // Add more ratings
 ];
 
@@ -57,6 +57,12 @@ export default function Home() {
   //upto here
 
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const limit = 20; // Number of movies per request
+
   useEffect(() => {
     const fetchMovies = async () => {
       const moviesData = await getAllMovies();

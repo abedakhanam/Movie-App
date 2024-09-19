@@ -5,12 +5,38 @@ import reviewSchema from "../helpers/reviewValidation";
 //all movies
 const getAllMovies = async (req: Request, res: Response) => {
   try {
-    const allMovies = await Movie.findAll({
-      attributes: ["movieID", "name", "thumbnailUrl"],
+    const page = parseInt(req.query.page as string) || 1; // Default to page 1
+    const limit = parseInt(req.query.limit as string) || 20; // Default to 20 movies per page
+    const offset = (page - 1) * limit; // Calculate the number of items to skip
+
+    const { rows: allMovies, count: totalMovies } = await Movie.findAndCountAll(
+      {
+        attributes: ["movieID", "name", "thumbnailUrl"],
+        limit,
+        offset,
+      }
+    );
+
+    // Format the movie data (if additional formatting is needed)
+    const result = allMovies.map((movie) => ({
+      movieID: movie.movieID,
+      name: movie.name,
+      thumbnailUrl: movie.thumbnailUrl,
+    }));
+
+    const totalPages = Math.ceil(totalMovies / limit);
+
+    res.status(200).json({
+      message: "Movies fetched successfully",
+      currentPage: page,
+      totalPages,
+      totalMovies,
+      limit,
+      offset,
+      movies: result,
     });
-    res.status(200).json({ message: "get all movie successful", allMovies });
   } catch (error) {
-    return res.status(400).json({ message: "failed to fetch movies" });
+    return res.status(400).json({ message: "Failed to fetch movies", error });
   }
 };
 
