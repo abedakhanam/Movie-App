@@ -7,9 +7,10 @@ import {
   loadMoviesFailure,
   loadMoviesRequest,
   loadMoviesSuccess,
+  resetMovies,
 } from "@/store/movieSilce";
-import { AppDispatch, RootState } from "@/store/store";
-import { useEffect } from "react";
+import { AppDispatch, RootState, store } from "@/store/store";
+import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 //for now
@@ -41,41 +42,76 @@ export default function Home() {
   const { movies, page, hasMore, loading } = useSelector(
     (state: RootState) => state.movies
   );
+  const [initialLoad, setInitialLoad] = useState(true);
 
   const limit = 20; // Number of movies per request
 
-  const fetchMovies = async (page: number, limit: number) => {
-    dispatch(loadMoviesRequest());
-    try {
-      const moviesData = await getAllMovies(page, limit);
-      dispatch(
-        loadMoviesSuccess({
-          movies: moviesData,
-          hasMore: moviesData.length > 0,
-        })
-      );
-      dispatch(incrementPage());
-    } catch (error) {
-      dispatch(loadMoviesFailure());
-    }
-  };
+  const fetchMovies = useCallback(
+    async (currentPage: number, limit: number) => {
+      dispatch(loadMoviesRequest());
+      try {
+        const moviesData = await getAllMovies(currentPage, limit);
+        dispatch(
+          loadMoviesSuccess({
+            movies: moviesData,
+            hasMore: moviesData.length === limit,
+          })
+        );
+        dispatch(incrementPage());
+      } catch (error) {
+        dispatch(loadMoviesFailure());
+      }
+    },
+    [dispatch]
+  );
 
-  const handleScroll = () => {
+  // const fetchMovies = async (page: number, limit: number) => {
+  //   dispatch(loadMoviesRequest());
+  //   try {
+  //     const moviesData = await getAllMovies(page, limit);
+  //     dispatch(
+  //       loadMoviesSuccess({
+  //         movies: moviesData,
+  //         hasMore: moviesData.length > 0,
+  //       })
+  //     );
+  //     dispatch(incrementPage());
+  //   } catch (error) {
+  //     dispatch(loadMoviesFailure());
+  //   }
+  // };
+
+  // const handleScroll = () => {
+  //   if (
+  //     window.innerHeight + document.documentElement.scrollTop >=
+  //       document.documentElement.offsetHeight &&
+  //     !loading &&
+  //     hasMore
+  //   ) {
+  //     // Calculate offset based on the current page and limit
+  //     fetchMovies(page, limit);
+  //   }
+  // };
+
+  const handleScroll = useCallback(() => {
     if (
       window.innerHeight + document.documentElement.scrollTop >=
-        document.documentElement.offsetHeight &&
+        document.documentElement.offsetHeight - 200 &&
       !loading &&
       hasMore
     ) {
-      // Calculate offset based on the current page and limit
       fetchMovies(page, limit);
     }
-  };
+  }, [fetchMovies, loading, hasMore, page, limit]);
 
   // Initial fetch of movies when the component mounts
   useEffect(() => {
-    fetchMovies(page, limit);
-  }, []);
+    if (initialLoad) {
+      dispatch(resetMovies());
+      fetchMovies(1, limit);
+      setInitialLoad(false);
+    }
+  }, [dispatch, fetchMovies, initialLoad, limit]);
 
   // Scroll event listener
   useEffect(() => {

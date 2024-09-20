@@ -8,7 +8,8 @@ const reviewSchema = z.object({
     .int()
     .min(1, "Rating must be at least 1")
     .max(10, "Rating cannot be more than 10")
-    .optional(),
+    .optional()
+    .nullable(),
   review: z.string().optional(),
   createdAt: z.date().optional(),
 });

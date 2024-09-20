@@ -40,9 +40,7 @@ const movieSlice = createSlice({
       state.page += 1;
     },
     resetMovies: (state) => {
-      state.movies = [];
-      state.page = 1;
-      state.hasMore = true;
+      return initialState;
     },
   },
 });
