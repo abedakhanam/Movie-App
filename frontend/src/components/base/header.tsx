@@ -1,6 +1,7 @@
 import { RootState } from "@/store/store";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
 const navLinks = [
@@ -26,10 +27,14 @@ const navUserLinks = [
 ];
 
 export default function Header() {
+  const [isMounted, setIsMounted] = useState(false);
   const isAuthenticated = useSelector(
     (state: RootState) => state.user.isAuthenticated
   );
   const firstName = useSelector((state: RootState) => state.user.firstName); //setup for profile
+  useEffect(() => {
+    setIsMounted(true); // Set to true after component mounts
+  }, []);
   return (
     <header className="flex justify-between items-center py-4 px-7 border-b bg-customRed">
       <Link href="/">
@@ -45,11 +50,7 @@ export default function Header() {
       {/* Search Form */}
       <form className="relative mx-5">
         <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
-          <img
-            src="/svg/search.svg"
-            alt="Search"
-            className="w-4 h-4"
-          />
+          <img src="/svg/search.svg" alt="Search" className="w-4 h-4" />
         </span>
         <input
           type="text"
@@ -60,7 +61,7 @@ export default function Header() {
 
       <nav>
         <ul className="flex gap-x-5 text-white text-[14px]">
-          {isAuthenticated ? (
+          {isMounted && isAuthenticated ? (
             <>
               <li key="profile">
                 <Link
