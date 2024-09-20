@@ -7,6 +7,7 @@ import Footer from "@/components/base/footer";
 import Container from "@/components/base/container";
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
+// import React from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 

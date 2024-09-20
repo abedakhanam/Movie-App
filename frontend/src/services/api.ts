@@ -17,7 +17,7 @@ export const getAllMovies = async (page: number, limit: number) => {
 
 export const getMovieDetails = async (id: number) => {
   try {
-    const response = await api.get(`/${id}`);
+    const response = await api.get(`/movie/${id}`);
     return response.data;
   } catch (error) {
     console.error("Error fetching movie details", error);
@@ -40,18 +40,29 @@ export const postReview = async (
     if (review !== null && review.trim() !== "") {
       payload.review = review;
     }
-    const response = await api.post(
-      `/${movieID}/review`,
-      payload,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`, // Send token in Authorization header
-        },
-      }
-    );
+    const response = await api.post(`/${movieID}/review`, payload, {
+      headers: {
+        Authorization: `Bearer ${token}`, // Send token in Authorization header
+      },
+    });
     return response.data;
   } catch (error) {
     console.error("Error posting review", error);
+    throw error;
+  }
+};
+
+export const deleteReview = async (movieID: number, reviewID: number, token: string | null) => {
+  try {
+    const response = await api.delete(`/${movieID}/review`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      data: { reviewID }, // Pass the reviewID in the request body
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting review", error);
     throw error;
   }
 };

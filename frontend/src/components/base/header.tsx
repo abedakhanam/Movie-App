@@ -1,3 +1,4 @@
+import { getUserCookie } from "@/services/cookie";
 import { RootState } from "@/store/store";
 import Image from "next/image";
 import Link from "next/link";
@@ -31,6 +32,8 @@ export default function Header() {
   const isAuthenticated = useSelector(
     (state: RootState) => state.user.isAuthenticated
   );
+  // const user = getUserCookie();
+  // console.log(user.isAuthenticated);
   const firstName = useSelector((state: RootState) => state.user.firstName); //setup for profile
   useEffect(() => {
     setIsMounted(true); // Set to true after component mounts

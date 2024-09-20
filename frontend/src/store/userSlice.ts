@@ -1,3 +1,8 @@
+import {
+  getUserCookie,
+  removeUserCookie,
+  setUserCookie,
+} from "@/services/cookie";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface UserState {
@@ -18,9 +23,11 @@ export const initialState: UserState = {
   isAuthenticated: false,
 };
 
+const savedUser = getUserCookie();
+
 const userSlice = createSlice({
   name: "user",
-  initialState: initialState,
+  initialState: savedUser || initialState,
   reducers: {
     login: (
       state,
@@ -33,6 +40,8 @@ const userSlice = createSlice({
       state.token = action.payload.token;
       state.email = action.payload.email;
       state.isAuthenticated = true;
+      // Persist to cookies
+      setUserCookie(state);
     },
     logout: (state) => {
       state.userID = null;
@@ -41,6 +50,8 @@ const userSlice = createSlice({
       state.token = null;
       state.email = "";
       state.isAuthenticated = false;
+      // Remove user cookie
+      removeUserCookie();
     },
   },
 });

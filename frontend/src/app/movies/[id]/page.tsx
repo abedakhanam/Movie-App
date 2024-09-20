@@ -1,35 +1,10 @@
 "use client";
-import { getMovieDetails, postReview } from "@/services/api";
+import { deleteReview, getMovieDetails, postReview } from "@/services/api";
+import { Movie, Review } from "@/services/type";
 import { RootState } from "@/store/store";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
-
-interface Review {
-  reviewID: number;
-  userID: number;
-  rating: number;
-  review: string;
-  createdAt: string;
-}
-interface Movie {
-  movieID: number;
-  name: string;
-  releaseYear: number;
-  rating: number;
-  thumbnailUrl: string;
-  votes: number;
-  duration: number;
-  type: string;
-  certificate: string;
-  nudity: string;
-  violence: string;
-  profanity: string;
-  alcohol: string;
-  frightening: string;
-  description: string | null;
-  Reviews: Review[];
-}
 
 const MovieDetails = () => {
   const router = useRouter();
@@ -45,10 +20,13 @@ const MovieDetails = () => {
   const token = useSelector((state: RootState) => state.user.token);
   const userID = useSelector((state: RootState) => state.user.userID);
   // console.log(token);
+  const isFetching = useRef(false); //for repeat api call
 
   useEffect(() => {
     if (movieID) {
       const fetchMovieDetails = async () => {
+        if (isFetching.current) return; //prevent dup calls
+        isFetching.current = true;
         try {
           const movieData = await getMovieDetails(Number(movieID));
           setMovie(movieData.movie);
@@ -56,6 +34,7 @@ const MovieDetails = () => {
           console.error("Error fetching movie details", error);
         } finally {
           setLoading(false);
+          isFetching.current = false;
         }
       };
       fetchMovieDetails();
@@ -76,12 +55,6 @@ const MovieDetails = () => {
     try {
       setError(null);
       setSuccess(null);
-      const newReview = await postReview(
-        Number(movieID),
-        rating,
-        reviewContent,
-        token
-      );
       // Submit the review (update or create new one)
       const newOrUpdatedReview = await postReview(
         Number(movieID),
@@ -122,7 +95,31 @@ const MovieDetails = () => {
     }
   };
 
-  if (loading) return <p>Loading...</p>;
+  const handleDeleteReview = async (reviewID: number, e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      setError(null);
+      setSuccess(null);
+      // Call the delete review API
+      await deleteReview(Number(movieID), reviewID, token);
+
+      // Update the movie's review state to remove the deleted review
+      if (movie) {
+        setMovie({
+          ...movie,
+          Reviews: movie.Reviews.filter((r) => r.reviewID !== reviewID),
+        });
+      }
+      setSuccess("Review deleted successfully!");
+    } catch (error) {
+      setError("Failed to delete review");
+    }
+  };
+
+  if (loading)
+    return (
+      <p className="flex justify-center items-center h-screen">Loading...</p>
+    );
   return movie ? (
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg">
       <div className="flex items-center space-x-4 mb-4">
@@ -193,6 +190,14 @@ const MovieDetails = () => {
                 <strong>Date:</strong>
                 {new Date(review.createdAt).toLocaleDateString()}
               </p>
+              {review.userID === userID && (
+                <button
+                  onClick={(e) => handleDeleteReview(review.reviewID, e)}
+                  className="text-red-500 hover:text-red-700 text-sm"
+                >
+                  Delete
+                </button>
+              )}
             </div>
           </div>
         ))
@@ -207,7 +212,7 @@ const MovieDetails = () => {
           <div className="mb-4">
             <p className="mb-2">Rating:</p>
             <div className="flex space-x-2">
-              {[1, 2, 3, 4, 5].map((star) => (
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
                 <button
                   key={star}
                   type="button"

@@ -1,5 +1,6 @@
 "use client";
 import DiscoveryHeader from "@/components/base/DiscoveryHeader";
+import { certificate, genre, ratings, type } from "@/components/filter";
 import MovieCard from "@/components/MovieCard";
 import { getAllMovies } from "@/services/api";
 import {
@@ -10,32 +11,8 @@ import {
   resetMovies,
 } from "@/store/movieSilce";
 import { AppDispatch, RootState, store } from "@/store/store";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-
-//for now
-const genre = [
-  { label: "Action", value: "action" },
-  { label: "Comedy", value: "comedy" },
-  // Add more categories
-];
-const ratings = [
-  { label: "5 Stars", value: "5" },
-  { label: "4 Stars", value: "4" },
-  // Add more ratings
-];
-
-const type = [
-  { label: "Type 1", value: "type1" },
-  { label: "Type 2", value: "type2" },
-  // Add more ratings
-];
-
-const certificate = [
-  { label: "Certificate 1", value: "cert1" },
-  { label: "Certificate 2", value: "cert2" },
-  // Add more ratings
-];
 
 export default function Home() {
   const dispatch = useDispatch<AppDispatch>();
@@ -45,9 +22,12 @@ export default function Home() {
   const [initialLoad, setInitialLoad] = useState(true);
 
   const limit = 20; // Number of movies per request
+  const isFetching = useRef(false); //for repeat api call
 
   const fetchMovies = useCallback(
     async (currentPage: number, limit: number) => {
+      if (isFetching.current) return; //prevent dup calls
+      isFetching.current = true;
       dispatch(loadMoviesRequest());
       try {
         const moviesData = await getAllMovies(currentPage, limit);
@@ -60,38 +40,12 @@ export default function Home() {
         dispatch(incrementPage());
       } catch (error) {
         dispatch(loadMoviesFailure());
+      } finally {
+        isFetching.current = false;
       }
     },
     [dispatch]
   );
-
-  // const fetchMovies = async (page: number, limit: number) => {
-  //   dispatch(loadMoviesRequest());
-  //   try {
-  //     const moviesData = await getAllMovies(page, limit);
-  //     dispatch(
-  //       loadMoviesSuccess({
-  //         movies: moviesData,
-  //         hasMore: moviesData.length > 0,
-  //       })
-  //     );
-  //     dispatch(incrementPage());
-  //   } catch (error) {
-  //     dispatch(loadMoviesFailure());
-  //   }
-  // };
-
-  // const handleScroll = () => {
-  //   if (
-  //     window.innerHeight + document.documentElement.scrollTop >=
-  //       document.documentElement.offsetHeight &&
-  //     !loading &&
-  //     hasMore
-  //   ) {
-  //     // Calculate offset based on the current page and limit
-  //     fetchMovies(page, limit);
-  //   }
-  // };
 
   const handleScroll = useCallback(() => {
     if (

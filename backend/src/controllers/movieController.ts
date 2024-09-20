@@ -134,4 +134,36 @@ const addReview = async (req: Request, res: Response) => {
   }
 };
 
-export { getAllMovies, getMoviebyPK, fetchReview, addReview };
+const deleteReview = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const movieID = parseInt(id);
+  const { reviewID } = req.body;
+  if (!req.user || !req.user.userID) {
+    return res
+      .status(401)
+      .json({ message: "Unauthorized: User not authenticated" });
+  }
+  const userID = parseInt(req.user.userID);
+  try {
+    // Find the review
+    const review = await Review.findOne({
+      where: { reviewID, movieID, userID },
+    });
+
+    // If the review does not exist or does not belong to the user, return 404
+    if (!review) {
+      return res
+        .status(404)
+        .json({ message: "Review not found or does not belong to this user" });
+    }
+
+    // Delete the review
+    await review.destroy();
+
+    return res.status(200).json({ message: "Review deleted successfully" });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to delete review" });
+  }
+};
+
+export { getAllMovies, getMoviebyPK, fetchReview, addReview, deleteReview };
