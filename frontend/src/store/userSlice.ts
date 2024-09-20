@@ -5,7 +5,7 @@ import {
 } from "@/services/cookie";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-interface UserState {
+export interface UserState {
   userID: number | null;
   firstName: string | null;
   lastName: string | null;
@@ -29,7 +29,10 @@ const userSlice = createSlice({
   name: "user",
   initialState: savedUser || initialState,
   reducers: {
-    login: (state, action: PayloadAction<UserState>) => {
+    login: (
+      state,
+      action: PayloadAction<Omit<UserState, "isAuthenticated">>
+    ) => {
       console.log(`${action.payload.userID}`);
       state.userID = action.payload.userID;
       state.firstName = action.payload.firstName;

@@ -60,9 +60,15 @@ const MovieDetails = () => {
 
   const handleSubmitReview = async (e: any) => {
     e.preventDefault();
+    console.log("review: " + review);
     if (movieID && (rating || review)) {
       try {
-        await postReview(Number(movieID), rating || null, review || null, token); // Pass the token to the API
+        await postReview(
+          Number(movieID),
+          rating || null,
+          review || null,
+          token
+        ); // Pass the token to the API
         // alert(`token ${token}`);
         alert(`ok`);
         setReview("");

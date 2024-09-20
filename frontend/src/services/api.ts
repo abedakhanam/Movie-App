@@ -31,22 +31,20 @@ export const postReview = async (
   review: string | null,
   token: string | null
 ) => {
-  console.log(
-    `mvovieId: ${movieID}, ratong: ${rating}, rev: ${review}`
-  );
-  // try {
-  //   const response = await api.post(
-  //     `/${movieID}/review`,
-  //     { rating, review },
-  //     {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`, // Send token in Authorization header
-  //       },
-  //     }
-  //   );
-  //   return response.data;
-  // } catch (error) {
-  //   console.error("Error posting review", error);
-  //   throw error;
-  // }
+  console.log(`mvovieId: ${movieID}, ratong: ${rating}, rev: ${review}`);
+  try {
+    const response = await api.post(
+      `/${movieID}/review`,
+      { rating, review },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // Send token in Authorization header
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error posting review", error);
+    throw error;
+  }
 };
