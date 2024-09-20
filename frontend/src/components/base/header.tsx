@@ -6,22 +6,22 @@ import { useSelector } from "react-redux";
 
 const navLinks = [
   {
-    href: "login",
+    href: "/login",
     label: "Login",
   },
   {
-    href: "register",
+    href: "/register",
     label: "SignUp",
   },
 ];
 
 const navUserLinks = [
   {
-    href: "watchlist",
+    href: "/watchlist",
     label: "WatchList",
   },
   {
-    href: "logout",
+    href: "/logout",
     label: "Logout",
   },
 ];

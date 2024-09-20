@@ -1,7 +1,7 @@
 "use client";
 import { getMovieDetails, postReview } from "@/services/api";
 import { RootState } from "@/store/store";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 
@@ -32,6 +32,7 @@ interface Movie {
 }
 
 const MovieDetails = () => {
+  const router = useRouter();
   const params = useParams();
   const movieID = params.id;
   const [movie, setMovie] = useState<Movie | null>(null);
@@ -42,6 +43,7 @@ const MovieDetails = () => {
   const [success, setSuccess] = useState<string | null>(null);
 
   const token = useSelector((state: RootState) => state.user.token);
+  const userID = useSelector((state: RootState) => state.user.userID);
   // console.log(token);
 
   useEffect(() => {
@@ -62,6 +64,9 @@ const MovieDetails = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (token == null) {
+      router.push("/login");
+    }
     // If both rating and review are empty, show an error message
     if (!rating && !review.trim()) {
       setError("Please provide a rating or review.");
@@ -71,8 +76,44 @@ const MovieDetails = () => {
     try {
       setError(null);
       setSuccess(null);
-      const response = await postReview(Number(movieID), rating, reviewContent, token);
-      // console.log(response);
+      const newReview = await postReview(
+        Number(movieID),
+        rating,
+        reviewContent,
+        token
+      );
+      // Submit the review (update or create new one)
+      const newOrUpdatedReview = await postReview(
+        Number(movieID),
+        rating,
+        reviewContent,
+        token
+      );
+
+      // Check if the user already has a review in the state
+      if (movie) {
+        const existingReviewIndex = movie.Reviews.findIndex(
+          (r) => r.userID === userID
+        );
+
+        if (existingReviewIndex !== -1) {
+          // Update the existing review in the state
+          const updatedReviews = [...movie.Reviews];
+          updatedReviews[existingReviewIndex] = newOrUpdatedReview;
+
+          setMovie({
+            ...movie,
+            Reviews: updatedReviews,
+          });
+        } else {
+          // Add new review to the state
+          setMovie({
+            ...movie,
+            Reviews: [...movie.Reviews, newOrUpdatedReview],
+          });
+        }
+      }
+      // console.log(newReview);
       setSuccess("Review submitted successfully!");
       setReview("");
       setRating(null);

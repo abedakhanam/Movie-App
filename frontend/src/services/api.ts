@@ -31,11 +31,18 @@ export const postReview = async (
   review: string | null,
   token: string | null
 ) => {
-  console.log(`mvovieId: ${movieID}, ratong: ${rating}, rev: ${review}`);
   try {
+    // Construct payload dynamically based on what's provided
+    const payload: { rating?: number; review?: string | null } = {};
+    if (rating !== null) {
+      payload.rating = rating;
+    }
+    if (review !== null && review.trim() !== "") {
+      payload.review = review;
+    }
     const response = await api.post(
       `/${movieID}/review`,
-      { rating, review },
+      payload,
       {
         headers: {
           Authorization: `Bearer ${token}`, // Send token in Authorization header
