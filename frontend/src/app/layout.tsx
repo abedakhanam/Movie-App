@@ -6,8 +6,8 @@ import Header from "@/components/base/header";
 import Footer from "@/components/base/footer";
 import Container from "@/components/base/container";
 import { Provider } from "react-redux";
-import { store } from "@/store/store";
-
+import { persistor, store } from "@/store/store";
+import { PersistGate } from "redux-persist/integration/react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
         <html lang="en">
           <body
             className={`${inter.className} bg-zinc-100 text-zinc-900 min-h-screen`}
@@ -34,6 +35,7 @@ export default function RootLayout({
             </Container>
           </body>
         </html>
+      </PersistGate>
     </Provider>
   );
 }
