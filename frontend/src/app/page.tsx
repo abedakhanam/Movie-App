@@ -19,6 +19,7 @@ export default function Home() {
   const { movies, page, hasMore, loading } = useSelector(
     (state: RootState) => state.movies
   );
+  const [filters, setFilters] = useState({});
   const [initialLoad, setInitialLoad] = useState(true);
 
   const limit = 20; // Number of movies per request
@@ -30,7 +31,7 @@ export default function Home() {
       isFetching.current = true;
       dispatch(loadMoviesRequest());
       try {
-        const moviesData = await getAllMovies(currentPage, limit);
+        const moviesData = await getAllMovies(currentPage, limit, filters);
         dispatch(
           loadMoviesSuccess({
             movies: moviesData,
@@ -44,7 +45,7 @@ export default function Home() {
         isFetching.current = false;
       }
     },
-    [dispatch]
+    [dispatch, filters]
   );
 
   const handleScroll = useCallback(() => {
@@ -73,6 +74,12 @@ export default function Home() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [loading, hasMore, page]);
 
+  const handleFilterChange = (newFilters: any) => {
+    setFilters(newFilters);
+    dispatch(resetMovies());
+    fetchMovies(1, limit); // Fetch movies again with new filters
+  };
+
   return (
     <div className="p-4">
       <DiscoveryHeader
@@ -80,6 +87,7 @@ export default function Home() {
         ratings={ratings}
         type={type}
         certificate={certificate}
+        onFilterChange={handleFilterChange}
       />
       <h1 className="text-3xl font-bold mb-6">Movies List</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
