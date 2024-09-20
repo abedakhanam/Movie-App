@@ -1,4 +1,5 @@
 // components/MovieCard.tsx
+import { useRouter } from "next/navigation";
 import React from "react";
 
 interface MovieCardProps {
@@ -12,8 +13,16 @@ const MovieCard: React.FC<MovieCardProps> = ({
   name,
   thumbnailUrl,
 }) => {
+  const router = useRouter();
+  const goToDetails = () => {
+    router.push(`/movies/${movieID}`);
+  };
   return (
-    <div key={movieID} className="bg-white rounded-lg shadow-md p-4">
+    <div
+      key={movieID}
+      onClick={goToDetails}
+      className="bg-white rounded-lg shadow-md p-4"
+    >
       <img
         src={thumbnailUrl}
         alt={name}

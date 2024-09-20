@@ -1,11 +1,12 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./userSlice";
+import movieReducer from "./movieSilce";
 
 export const store = configureStore({
   reducer: {
     user: userReducer,
+    movies: movieReducer,
   },
-  // devTools: process.env.NODE_ENV !== "production", // Optional but useful for development
 });
 
 // Infer the `RootState` and `AppDispatch` types from the store itself

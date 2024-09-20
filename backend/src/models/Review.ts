@@ -5,8 +5,8 @@ interface ReviewAttributes {
   reviewID?: number;
   userID: number;
   movieID: number;
-  rating?: number;
-  review?: string;
+  rating?: number | null;
+  review?: string | null;
   createdAt?: Date;
 }
 
@@ -14,8 +14,8 @@ class Review extends Model<ReviewAttributes> implements ReviewAttributes {
   public reviewID!: number;
   public userID!: number;
   public movieID!: number;
-  public rating?: number;
-  public review?: string | undefined;
+  public rating?: number | null | undefined;
+  public review?: string | null | undefined;
   public createdAt?: Date | undefined;
 }
 

@@ -2,13 +2,15 @@
 import DiscoveryHeader from "@/components/base/DiscoveryHeader";
 import MovieCard from "@/components/MovieCard";
 import { getAllMovies } from "@/services/api";
-import { useCallback, useEffect, useRef, useState } from "react";
-
-interface Movie {
-  movieID: number;
-  name: string;
-  thumbnailUrl: string;
-}
+import {
+  incrementPage,
+  loadMoviesFailure,
+  loadMoviesRequest,
+  loadMoviesSuccess,
+} from "@/store/movieSilce";
+import { AppDispatch, RootState } from "@/store/store";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 //for now
 const genre = [
@@ -35,76 +37,51 @@ const certificate = [
 ];
 
 export default function Home() {
-  //will fix later
-  const [filters, setFilters] = useState<{
-    genre?: string;
-    rating?: string;
-    type?: string;
-    certificate?: string;
-  }>({});
+  const dispatch = useDispatch<AppDispatch>();
+  const { movies, page, hasMore, loading } = useSelector(
+    (state: RootState) => state.movies
+  );
 
-  const handleFilterChange = (updatedFilters: {
-    genre?: string;
-    rating?: string;
-    type?: string;
-    certificate?: string;
-  }) => {
-    setFilters(updatedFilters);
-
-    // Make API call to fetch filtered data from the backend
-    // Example: axios.get('/api/movies', { params: updatedFilters });
-  };
-  //upto here
-
-  const [movies, setMovies] = useState<Movie[]>([]);
-  const [page, setPage] = useState(1); // Current page for pagination
-  const [hasMore, setHasMore] = useState(true); // To track if there are more movies to load
-  const [loading, setLoading] = useState(false); // To handle loading state
   const limit = 20; // Number of movies per request
-  const loaderRef = useRef(null); // Ref to track the scroll position
 
-  const fetchMovies = async (page: number) => {
-    setLoading(true);
-    const moviesData = await getAllMovies(page, limit); // Fetch movies with pagination
-    if (moviesData.length === 0) {
-      setHasMore(false); // If no more movies are fetched, stop further loading
-    } else {
-      setMovies((prevMovies) => [...prevMovies, ...moviesData]); // Append new movies
+  const fetchMovies = async (page: number, limit: number) => {
+    dispatch(loadMoviesRequest());
+    try {
+      const moviesData = await getAllMovies(page, limit);
+      dispatch(
+        loadMoviesSuccess({
+          movies: moviesData,
+          hasMore: moviesData.length > 0,
+        })
+      );
+      dispatch(incrementPage());
+    } catch (error) {
+      dispatch(loadMoviesFailure());
     }
-    setLoading(false);
   };
 
-  useEffect(() => {
-    fetchMovies(page);
-  }, [page]);
-
-  // Infinite Scroll Logic
-  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
-    const target = entries[0];
-    if (target.isIntersecting && hasMore && !loading) {
-      setPage((prevPage) => prevPage + 1); // Load next page when observer triggers
+  const handleScroll = () => {
+    if (
+      window.innerHeight + document.documentElement.scrollTop >=
+        document.documentElement.offsetHeight &&
+      !loading &&
+      hasMore
+    ) {
+      // Calculate offset based on the current page and limit
+      fetchMovies(page, limit);
     }
-  }, [hasMore, loading]);
+  };
 
+  // Initial fetch of movies when the component mounts
   useEffect(() => {
-    const observer = new IntersectionObserver(handleObserver, {
-      root: null,
-      rootMargin: "20px",
-      threshold: 1.0,
-    });
-    if (loaderRef.current) observer.observe(loaderRef.current);
-    return () => {
-      if (loaderRef.current) observer.unobserve(loaderRef.current);
-    };
-  }, [handleObserver]);
+    fetchMovies(page, limit);
+  }, []);
 
-  // useEffect(() => {
-  //   const fetchMovies = async () => {
-  //     const moviesData = await getAllMovies();
-  //     setMovies(moviesData);
-  //   };
-  //   fetchMovies();
-  // }, []);
+  // Scroll event listener
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [loading, hasMore, page]);
 
   return (
     <div className="p-4">
@@ -130,7 +107,7 @@ export default function Home() {
         )}
       </div>
       {loading && <p>Loading more movies...</p>}
-      <div ref={loaderRef}></div> {/* Loader element to trigger infinite scroll */}
+      {/* Loader element to trigger infinite scroll */}
     </div>
   );
 }

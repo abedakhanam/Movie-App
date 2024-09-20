@@ -9,9 +9,9 @@ import { authToken } from "../middlewares/authUser";
 
 const router = Router();
 
-router.get("/", getAllMovies);
+router.get("/movies", getAllMovies);
 router.get("/:id", getMoviebyPK);
 router.get("/:id/reviews", fetchReview);
-router.post("/:id/review", authToken, addReview);
+router.post("/:id/review", authToken, addReview); //authtoken
 
 export default router;

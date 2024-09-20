@@ -69,8 +69,7 @@ const login = async (req: Request, res: Response) => {
 
     if (!isMatch)
       return res.status(401).json({ message: "invalid credentials" });
-
-    const token = generateToken({ id: user.userID.toString() }, "30d");
+    const token = generateToken({ userID: user.userID.toString() }, "30d");
     res.send({
       userID: user.userID,
       firstName: user.firstName,
@@ -93,4 +92,4 @@ const login = async (req: Request, res: Response) => {
 //   return res.status(200).json({ message: "User logges out successfully" });
 // };
 
-export { register, login};
+export { register, login };

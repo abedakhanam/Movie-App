@@ -8,6 +8,7 @@ import Container from "@/components/base/container";
 import { Provider } from "react-redux";
 import { store } from "@/store/store";
 
+
 const inter = Inter({ subsets: ["latin"] });
 
 const metadata: Metadata = {
@@ -22,17 +23,17 @@ export default function RootLayout({
 }>) {
   return (
     <Provider store={store}>
-      <html lang="en">
-        <body
-          className={`${inter.className} bg-zinc-100 text-zinc-900 min-h-screen`}
-        >
-          <Container>
-            <Header />
-            {children}
-            <Footer />
-          </Container>
-        </body>
-      </html>
+        <html lang="en">
+          <body
+            className={`${inter.className} bg-zinc-100 text-zinc-900 min-h-screen`}
+          >
+            <Container>
+              <Header />
+              {children}
+              <Footer />
+            </Container>
+          </body>
+        </html>
     </Provider>
   );
 }

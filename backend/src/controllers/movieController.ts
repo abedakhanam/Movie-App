@@ -14,6 +14,7 @@ const getAllMovies = async (req: Request, res: Response) => {
         attributes: ["movieID", "name", "thumbnailUrl"],
         limit,
         offset,
+        order: [["movieID", "ASC"]],
       }
     );
 
@@ -73,12 +74,18 @@ const fetchReview = async (req: Request, res: Response) => {
   }
 };
 
+//posting review
 const addReview = async (req: Request, res: Response) => {
   const { id } = req.params;
   const movieID = parseInt(id);
   const { rating, review } = req.body;
+
+  if (!req.user || !req.user.userID) {
+    return res
+      .status(401)
+      .json({ message: "Unauthorized: User not authenticated" });
+  }
   const userID = parseInt(req.user?.userID);
-  console.log(userID);
 
   try {
     const movie = await Movie.findByPk(movieID);
@@ -98,15 +105,30 @@ const addReview = async (req: Request, res: Response) => {
       });
     }
 
-    //will separate review & rating later and fix this isssue
-    const newReview = await Review.create({
-      movieID: movieID,
-      userID: userID,
-      rating,
-      review,
+    // Find if the user has already given a review/rating for this movie
+    const existingReview = await Review.findOne({
+      where: { movieID: movieID, userID: userID },
     });
 
-    res.status(201).json(newReview);
+    if (existingReview) {
+      // If a review/rating exists, update it with the new values
+      const updatedReview = await existingReview.update({
+        rating: rating || existingReview.rating, // Preserve the old rating if no new one is provided
+        review: review || existingReview.review, // Preserve the old review if no new one is provided
+      });
+
+      return res.status(200).json(updatedReview);
+    } else {
+      // If no review/rating exists, create a new one
+      const newReview = await Review.create({
+        movieID: movieID,
+        userID: userID,
+        rating: rating || null,
+        review: review || null,
+      });
+
+      return res.status(201).json(newReview);
+    }
   } catch (error) {
     return res.status(500).json({ error: "failed to add review/rating" });
   }
