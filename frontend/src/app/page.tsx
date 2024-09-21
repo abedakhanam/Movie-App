@@ -10,7 +10,7 @@ import {
   loadMoviesSuccess,
   resetMovies,
 } from "@/store/movieSilce";
-import { AppDispatch, RootState, store } from "@/store/store";
+import { AppDispatch, RootState } from "@/store/store";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -26,12 +26,13 @@ export default function Home() {
   const isFetching = useRef(false); //for repeat api call
 
   const fetchMovies = useCallback(
-    async (currentPage: number, limit: number) => {
+    async (currentPage: number, limit: number, appliedFilters = filters) => {
       if (isFetching.current) return; //prevent dup calls
       isFetching.current = true;
       dispatch(loadMoviesRequest());
       try {
-        const moviesData = await getAllMovies(currentPage, limit, filters);
+        console.log(`fetchmocvie filters ${JSON.stringify(appliedFilters)}`);
+        const moviesData = await getAllMovies(currentPage, limit, appliedFilters);
         dispatch(
           loadMoviesSuccess({
             movies: moviesData,
@@ -66,7 +67,7 @@ export default function Home() {
       fetchMovies(1, limit);
       setInitialLoad(false);
     }
-  }, [dispatch, fetchMovies, initialLoad, limit]);
+  }, [dispatch, fetchMovies, initialLoad, limit, filters]);
 
   // Scroll event listener
   useEffect(() => {
@@ -76,8 +77,9 @@ export default function Home() {
 
   const handleFilterChange = (newFilters: any) => {
     setFilters(newFilters);
+    // console.log(`newfilters ${JSON.stringify(filters)}`);
     dispatch(resetMovies());
-    fetchMovies(1, limit); // Fetch movies again with new filters
+    fetchMovies(1, limit, newFilters); // Fetch movies again with new filters
   };
 
   return (

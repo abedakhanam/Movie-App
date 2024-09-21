@@ -7,7 +7,7 @@ import { Op } from "sequelize";
 const getAllMovies = async (req: Request, res: Response) => {
   //router.get("/api/movies", getAllMovies);
   try {
-    console.log(req.query);
+    console.log("hitting from frontend: " + JSON.stringify(req.query));
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
     const offset = (page - 1) * limit;
@@ -39,7 +39,14 @@ const getAllMovies = async (req: Request, res: Response) => {
             through: { attributes: [] },
           },
         ],
-        attributes: ["movieID", "name", "thumbnailUrl", "rating", "type", "certificate"],
+        attributes: [
+          "movieID",
+          "name",
+          "thumbnailUrl",
+          "rating",
+          "type",
+          "certificate",
+        ],
         limit,
         offset,
         order: [["movieID", "ASC"]],
