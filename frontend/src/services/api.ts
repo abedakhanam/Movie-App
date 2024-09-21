@@ -93,3 +93,51 @@ export const deleteReview = async (
     throw error;
   }
 };
+
+//add to watchlist
+export const addToWatchList = async (movieID: number, token: string | null) => {
+  try {
+    const response = await api.post(
+      "/watchlist",
+      { movieID },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error adding to watchlist", error);
+    throw error;
+  }
+};
+
+//delete
+export const deleteFromWatchList = async (
+  movieID: number,
+  token: string | null
+) => {
+  try {
+    const response = await api.delete(`/watchlist/${movieID}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting from watchlist", error);
+    throw error;
+  }
+};
+
+// get all movies from watchlist
+// Get all movies in the watchlist
+export const getWatchList = async (token: string | null) => {
+  const response = await api.get("/watchlist", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+  return response.data.movies;
+};

@@ -53,6 +53,7 @@ export const getWatchList = async (req: Request, res: Response) => {
           attributes: [
             "movieID",
             "name",
+            "releaseYear",
             "thumbnailUrl",
             "rating",
             "type",
