@@ -1,7 +1,7 @@
 import { Sequelize, DataTypes, Model } from "sequelize";
 
 // Define the attributes for the Genre model
-interface GenreAttributes {
+export interface GenreAttributes {
   genreID?: number;
   genreName: string;
 }
