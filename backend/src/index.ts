@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import sequelize from "./config/database";
 import userRoutes from "./routes/userRoutes";
 import movieRoutes from "./routes/movieRoutes";
+import watchlistRoutes from "./routes/watchlistRoutes";
 import cors from "cors";
 // const bodyParser = require("body-parser");
 
@@ -15,6 +16,7 @@ app.use(cors({ origin: "http://localhost:3000", credentials: true }));
 app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api", movieRoutes);
+app.use("/api", watchlistRoutes);
 
 const PORT = process.env.PORT;
 

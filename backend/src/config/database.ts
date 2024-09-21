@@ -47,5 +47,9 @@ Movie.belongsToMany(User, {
   onDelete: "CASCADE",
 });
 
+// Define explicit associations between WatchList and User, Movie
+WatchList.belongsTo(User, { foreignKey: "userID", onDelete: "CASCADE" });
+WatchList.belongsTo(Movie, { foreignKey: "movieID", onDelete: "CASCADE" });
+
 export default sequelize;
 export { User, Movie, Genre, MovieGenre, Review, WatchList };

@@ -53,16 +53,6 @@ const getAllMovies = async (req: Request, res: Response) => {
       }
     );
 
-    // console.log("allMovies ==========" + JSON.stringify(allMovies));
-    // const result = allMovies.map((movie) => ({
-    //   movieID: movie.movieID,
-    //   name: movie.name,
-    //   thumbnailUrl: movie.thumbnailUrl,
-    //   rating: movie.rating,
-    //   type: movie.type,
-    //   genre: movie.Genres?.map((genre: GenreAttributes) => genre.genreName) || [],
-    // }));
-
     const totalPages = Math.ceil(totalMovies / limit);
 
     res.status(200).json({
@@ -78,6 +68,7 @@ const getAllMovies = async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Failed to fetch movies", error });
   }
 };
+
 //one movie details + reviews
 const getMoviebyPK = async (req: Request, res: Response) => {
   try {

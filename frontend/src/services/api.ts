@@ -38,45 +38,6 @@ export const getAllMovies = async (
   }
 };
 
-// export const getAllMovies = async (
-//   page: number,
-//   limit: number,
-//   filters: {
-//     genre?: string;
-//     rating?: string;
-//     type?: string;
-//     certificate?: string;
-//   }
-// ) => {
-//   try {
-//     // Filter out undefined values
-//     const params = new URLSearchParams({
-//       page: String(page),
-//       limit: String(limit),
-//       ...Object.entries(filters)
-//         .filter(([_, value]) => value !== undefined && value !== "")
-//         .reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {}),
-//     });
-//     console.log(params);
-//     const response = await api.get(`/movies?${params.toString()}`);
-//     return response.data.movies;
-//   } catch (error) {
-//     console.error("Error fetching movies", error);
-//     return [];
-//   }
-// };
-
-// export const getAllMovies = async (page: number, limit: number) => {
-//   try {
-//     const response = await api.get(`/movies?page=${page}&limit=${limit}`);
-//     console.log("API response:", response.data);
-//     return response.data.movies;
-//   } catch (error) {
-//     console.error("Error fetching movies", error);
-//     return [];
-//   }
-// };
-
 export const getMovieDetails = async (id: number) => {
   try {
     const response = await api.get(`/movie/${id}`);
