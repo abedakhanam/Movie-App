@@ -1,3 +1,94 @@
+// import { faker } from "@faker-js/faker";
+// import sequelize, { Genre, Movie, MovieGenre } from "./database";
+
+// const insertFakeMoviesInChunks = async (chunkSize: number) => {
+//   try {
+//     // Ensure the connection is established
+//     await sequelize.authenticate();
+
+//     // Fetch all genres from the database
+//     const genres = await Genre.findAll();
+
+//     for (let i = 0; i < 100000; i += chunkSize) {
+//       const moviesData = [];
+//       const movieGenreData = [];
+
+//       for (let j = 0; j < chunkSize && i + j < 100000; j++) {
+//         // Create movie data
+//         const movie = {
+//           name: faker.lorem.words(3),
+//           releaseYear: faker.date.past({ years: 30 }).getFullYear(),
+//           rating: parseFloat((Math.random() * 10).toFixed(1)), // Rating between 0 and 10
+//           thumbnailUrl: faker.image.url(),
+//           votes: faker.number.int({ min: 1000, max: 50000 }),
+//           duration: faker.number.int({ min: 90, max: 180 }), // Duration between 90 and 180 mins
+//           type: faker.helpers.arrayElement(["Film", "Series"]),
+//           certificate: faker.helpers.arrayElement([
+//             "PG-13",
+//             "R",
+//             "TV-MA",
+//             "TV-14",
+//             "TV-PG",
+//             "PG",
+//             "TV-G",
+//             "(Banned)",
+//             "Not Rated",
+//             "E",
+//             "NC-17",
+//             "TV-Y7-FV",
+//             "TV-Y7",
+//             "Unrated",
+//             "Approved",
+//             "G",
+//             "TV-Y",
+//             "GP",
+//             "Passed",
+//             "M",
+//             "X",
+//             "M/PG",
+//           ]),
+//           description: faker.lorem.paragraph(),
+//         };
+
+//         moviesData.push(movie);
+
+//         // Randomly assign between 1 to 3 genres per movie
+//         const randomGenres = faker.helpers.arrayElements(
+//           genres,
+//           faker.number.int({ min: 1, max: 3 })
+//         );
+
+//         for (const genre of randomGenres) {
+//           movieGenreData.push({
+//             movieID: i + j + 1, // This assumes auto-increment starts at 1 and matches the index
+//             genreID: genre.genreID,
+//           });
+//         }
+//       }
+
+//       // Insert the movies in bulk
+//       await Movie.bulkCreate(moviesData, { ignoreDuplicates: true });
+
+//       // Insert the movie-genre relationships in bulk
+//       await MovieGenre.bulkCreate(movieGenreData, { ignoreDuplicates: true });
+
+//       console.log(`Inserted ${i + chunkSize} movies`);
+//     }
+
+//     console.log(
+//       "100,000 movies and their associated genres have been inserted."
+//     );
+//   } catch (error) {
+//     console.error("Error inserting data:", error);
+//   } finally {
+//     // Close the database connection
+//     await sequelize.close();
+//   }
+// };
+
+// // Call the function to start inserting data in chunks of 10,000
+// insertFakeMoviesInChunks(10000);
+
 // import fs from "fs";
 // import path from "path";
 // import csvParser from "csv-parser";

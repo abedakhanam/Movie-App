@@ -8,12 +8,13 @@
     "build": "tsc --build",
     "start": "node ./dist/index.js",
     "dev": "nodemon ./src/index.ts",
-    "migrate-csv": "ts-node src/config/migrateData.ts"
+    "migrate": "ts-node src/config/migrateData.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@faker-js/faker": "^9.0.1",
     "@types/cors": "^2.8.17",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",

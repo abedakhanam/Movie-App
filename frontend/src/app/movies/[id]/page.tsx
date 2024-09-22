@@ -29,6 +29,9 @@ const MovieDetails = () => {
         isFetching.current = true;
         try {
           const movieData = await getMovieDetails(Number(movieID));
+          // console.log(
+          //   `getmoviedetails ${JSON.stringify(movieData.movie.description)}`
+          // );
           setMovie(movieData.movie);
         } catch (error) {
           console.error("Error fetching movie details", error);
@@ -133,6 +136,7 @@ const MovieDetails = () => {
             {movie.name}{" "}
             <span className="text-xl font-normal">({movie.releaseYear})</span>
           </h1>
+          <p className="text-sm">{movie.description}</p>
         </div>
       </div>
 
