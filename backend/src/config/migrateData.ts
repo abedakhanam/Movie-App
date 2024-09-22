@@ -41,83 +41,83 @@
 //   return genre.genreID;
 // }
 
-// // // Function to migrate the CSV data to the database
-// // async function migrateData() {
-// //   const results: any[] = [];
+// // Function to migrate the CSV data to the database
+// async function migrateData() {
+//   const results: any[] = [];
 
-// //   // Read and parse the CSV file
-// //   fs.createReadStream(csvFilePath)
-// //     .pipe(csvParser())
-// //     .on("data", (data) => {
-// //       results.push(data);
-// //     })
-// //     .on("end", async () => {
-// //       try {
-// //         // Start transaction
-// //         const transaction = await sequelize.transaction();
+//   // Read and parse the CSV file
+//   fs.createReadStream(csvFilePath)
+//     .pipe(csvParser())
+//     .on("data", (data) => {
+//       results.push(data);
+//     })
+//     .on("end", async () => {
+//       try {
+//         // Start transaction
+//         const transaction = await sequelize.transaction();
 
-// //         // Process each row in the CSV file
-// //         for (const row of results) {
-// //           // Insert movie into the Movies table
-// //           const movie = await Movie.create(
-// //             {
-// //               name: row.Name,
-// //               releaseYear: parseInteger(row.Date),
-// //               rating: parseNumber(row.Rate),
-// //               thumbnailUrl: null, // Assuming no URL from CSV
-// //               votes: parseInteger(row.Votes),
-// //               duration: parseNumber(row.Duration),
-// //               type: row.Type,
-// //               certificate: row.Certificate,
-// //               episodes:
-// //                 row.Episodes !== "-" ? parseInteger(row.Episodes) : null,
-// //               nudity: row.Nudity,
-// //               violence: row.Violence,
-// //               profanity: row.Profanity,
-// //               alcohol: row.Alcohol,
-// //               frightening: row.Frightening,
-// //               description: null, // Assuming no description from CSV
-// //             },
-// //             { transaction }
-// //           );
+//         // Process each row in the CSV file
+//         for (const row of results) {
+//           // Insert movie into the Movies table
+//           const movie = await Movie.create(
+//             {
+//               name: row.Name,
+//               releaseYear: parseInteger(row.Date),
+//               rating: parseNumber(row.Rate),
+//               thumbnailUrl: null, // Assuming no URL from CSV
+//               votes: parseInteger(row.Votes),
+//               duration: parseNumber(row.Duration),
+//               type: row.Type,
+//               certificate: row.Certificate,
+//               episodes:
+//                 row.Episodes !== "-" ? parseInteger(row.Episodes) : null,
+//               nudity: row.Nudity,
+//               violence: row.Violence,
+//               profanity: row.Profanity,
+//               alcohol: row.Alcohol,
+//               frightening: row.Frightening,
+//               description: null, // Assuming no description from CSV
+//             },
+//             { transaction }
+//           );
 
-// //           // Insert genres into the Genres table and link with movies
-// //           const genre1ID = await getOrCreateGenre(row.Genre);
-// //           const genre2ID = await getOrCreateGenre(row["Genre 2"]);
-// //           const genre3ID = await getOrCreateGenre(row["Genre 3"]);
+//           // Insert genres into the Genres table and link with movies
+//           const genre1ID = await getOrCreateGenre(row.Genre);
+//           const genre2ID = await getOrCreateGenre(row["Genre 2"]);
+//           const genre3ID = await getOrCreateGenre(row["Genre 3"]);
 
-// //           // Link movie to genres using the MovieGenre table
-// //           if (genre1ID !== -1) {
-// //             await MovieGenre.create(
-// //               { movieID: movie.movieID, genreID: genre1ID },
-// //               { transaction }
-// //             );
-// //           }
-// //           if (genre2ID !== -1) {
-// //             await MovieGenre.create(
-// //               { movieID: movie.movieID, genreID: genre2ID },
-// //               { transaction }
-// //             );
-// //           }
-// //           if (genre3ID !== -1) {
-// //             await MovieGenre.create(
-// //               { movieID: movie.movieID, genreID: genre3ID },
-// //               { transaction }
-// //             );
-// //           }
-// //         }
+//           // Link movie to genres using the MovieGenre table
+//           if (genre1ID !== -1) {
+//             await MovieGenre.create(
+//               { movieID: movie.movieID, genreID: genre1ID },
+//               { transaction }
+//             );
+//           }
+//           if (genre2ID !== -1) {
+//             await MovieGenre.create(
+//               { movieID: movie.movieID, genreID: genre2ID },
+//               { transaction }
+//             );
+//           }
+//           if (genre3ID !== -1) {
+//             await MovieGenre.create(
+//               { movieID: movie.movieID, genreID: genre3ID },
+//               { transaction }
+//             );
+//           }
+//         }
 
-// //         // Commit transaction
-// //         await transaction.commit();
-// //         console.log("Data migration completed successfully.");
-// //       } catch (error) {
-// //         console.error("Error during migration: ", error);
-// //       }
-// //     });
-// // }
+//         // Commit transaction
+//         await transaction.commit();
+//         console.log("Data migration completed successfully.");
+//       } catch (error) {
+//         console.error("Error during migration: ", error);
+//       }
+//     });
+// }
 
-// // // Execute the migration script
-// // migrateData();
+// // Execute the migration script
+// migrateData();
 
 // const csvFilePath = path.join(__dirname, "movies_with_posters.csv");
 

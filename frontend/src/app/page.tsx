@@ -41,7 +41,7 @@ export default function Home() {
           limit,
           appliedFilters
         );
-        console.log(`moviesData ${JSON.stringify(moviesData)}`);
+        // console.log(`moviesData ${JSON.stringify(moviesData)}`);
         dispatch(
           loadMoviesSuccess({
             movies: moviesData,

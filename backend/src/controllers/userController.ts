@@ -28,7 +28,7 @@ const register = async (req: Request, res: Response) => {
   try {
     //hash
     const hashPassword = await bcrypt.hash(password, 10);
-    console.log(hashPassword);
+    // console.log(hashPassword);
 
     //check if a user with same email exists
     const existingUser = await User.findOne({ where: { email } });
@@ -43,7 +43,7 @@ const register = async (req: Request, res: Response) => {
       email,
       password: hashPassword,
     });
-    console.log(user);
+    // console.log(user);
     res.status(201).json({ message: "User registered successfully", user });
   } catch (error) {
     // console.error("Error during user registration:", error);
