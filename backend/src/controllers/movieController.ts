@@ -7,7 +7,7 @@ import { Op } from "sequelize";
 const getAllMovies = async (req: Request, res: Response) => {
   //router.get("/api/movies", getAllMovies);
   try {
-    console.log("hitting from frontend: " + JSON.stringify(req.query));
+    // console.log("hitting from frontend: " + JSON.stringify(req.query));
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 20;
     const offset = (page - 1) * limit;

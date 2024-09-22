@@ -86,6 +86,7 @@ const watchlistSlice = createSlice({
     clearWatchlist: (state) => {
       state.movies = [];
       state.count = 0;
+      state.loading = false;
     },
   },
   extraReducers: (builder) => {

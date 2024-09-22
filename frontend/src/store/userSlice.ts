@@ -33,7 +33,7 @@ const userSlice = createSlice({
       state,
       action: PayloadAction<Omit<UserState, "isAuthenticated">>
     ) => {
-      console.log(`${action.payload.userID}`);
+      // console.log(`${action.payload.userID}`);
       state.userID = action.payload.userID;
       state.firstName = action.payload.firstName;
       state.lastName = action.payload.lastName;
@@ -44,12 +44,13 @@ const userSlice = createSlice({
       setUserCookie(state);
     },
     logout: (state) => {
-      state.userID = null;
-      state.firstName = "";
-      state.lastName = "";
-      state.token = null;
-      state.email = "";
-      state.isAuthenticated = false;
+      // state.userID = null;
+      // state.firstName = "";
+      // state.lastName = "";
+      // state.token = null;
+      // state.email = "";
+      // state.isAuthenticated = false;
+      Object.assign(state, initialState);
       // Remove user cookie
       removeUserCookie();
     },

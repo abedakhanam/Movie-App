@@ -1,7 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./userSlice";
 import movieReducer from "./movieSilce";
-import watchlistReducer from "./watchlistReducer";
+import watchlistReducer from "./watchlistSlice";
 
 export const store = configureStore({
   reducer: {

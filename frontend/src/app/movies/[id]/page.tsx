@@ -188,7 +188,7 @@ const MovieDetails = () => {
               </p>
               <p className="text-sm">
                 <strong>Date:</strong>
-                {new Date(review.createdAt).toLocaleDateString()}
+                {new Date(review.createdAt).toLocaleString()}
               </p>
               {review.userID === userID && (
                 <button
