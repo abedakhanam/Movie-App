@@ -16,10 +16,6 @@ const navLinks = [
 ];
 
 const navUserLinks = [
-  // {
-  //   href: "/watchlist",
-  //   label: "WatchList",
-  // },
   {
     href: "/logout",
     label: "Logout",

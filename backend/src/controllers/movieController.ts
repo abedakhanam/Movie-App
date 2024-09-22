@@ -12,7 +12,7 @@ const getAllMovies = async (req: Request, res: Response) => {
     const limit = parseInt(req.query.limit as string) || 20;
     const offset = (page - 1) * limit;
 
-    const { genre, rating, type, certificate } = req.query;
+    const { genre, rating, type, certificate, search } = req.query;
 
     const whereClause: any = {};
 
@@ -24,6 +24,12 @@ const getAllMovies = async (req: Request, res: Response) => {
     }
     if (certificate) {
       whereClause.certificate = certificate;
+    }
+    if (search) {
+      whereClause[Op.or] = [
+        {name: { [Op.iLike]: `%${search}%` }},
+        {description: { [Op.iLike]: `%${search}%` }},
+      ];
     }
 
     const genreFilter = genre ? { genreName: genre } : {};
