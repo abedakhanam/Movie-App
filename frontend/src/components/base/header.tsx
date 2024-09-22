@@ -1,4 +1,3 @@
-import { getUserCookie } from "@/services/cookie";
 import { RootState } from "@/store/store";
 import Image from "next/image";
 import Link from "next/link";

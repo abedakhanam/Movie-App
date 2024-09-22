@@ -4,6 +4,9 @@ interface Movie {
   movieID: number;
   name: string;
   thumbnailUrl: string;
+  rating: number;
+  type: string;
+  certificate: string;
 }
 interface MovieState {
   movies: Movie[];

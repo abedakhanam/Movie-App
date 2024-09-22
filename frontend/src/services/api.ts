@@ -30,7 +30,7 @@ export const getAllMovies = async (
     const response = await api.get(`/movies?${params.toString()}`);
 
     // Assuming the API returns the movies in `response.data.movies`
-    // console.log(`Fetching movies with params: ${response.data.movies}`);
+    // console.log(`Fetching movies with params: ${JSON.stringify(response.data.movies)}`);
     return response.data.movies;
   } catch (error) {
     console.error("Error fetching movies", error);
