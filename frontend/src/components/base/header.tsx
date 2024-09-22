@@ -16,10 +16,10 @@ const navLinks = [
 ];
 
 const navUserLinks = [
-  {
-    href: "/watchlist",
-    label: "WatchList",
-  },
+  // {
+  //   href: "/watchlist",
+  //   label: "WatchList",
+  // },
   {
     href: "/logout",
     label: "Logout",
@@ -34,6 +34,9 @@ export default function Header() {
   // const user = getUserCookie();
   // console.log(user.isAuthenticated);
   const firstName = useSelector((state: RootState) => state.user.firstName); //setup for profile
+  const watchlistCount = useSelector(
+    (state: RootState) => state.watchlist.count
+  );
   useEffect(() => {
     setIsMounted(true); // Set to true after component mounts
   }, []);
@@ -71,6 +74,14 @@ export default function Header() {
                   className="hover:bg-white hover:text-black p-2"
                 >
                   {firstName}'s profile
+                </Link>
+              </li>
+              <li key="watchlist">
+                <Link
+                  href="/watchlist"
+                  className="hover:bg-white hover:text-black p-2"
+                >
+                  WatchList {watchlistCount > 0 ? `(${watchlistCount})` : null}
                 </Link>
               </li>
               {navUserLinks.map((link) => (
