@@ -1,4 +1,3 @@
-// components/MovieCard.tsx
 import { addToWatchList } from "@/services/api";
 import { RootState } from "@/store/store";
 import { useRouter } from "next/navigation";
@@ -61,7 +60,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
           className={`inline-block bg-transparent text-[#171C20] cursor-pointer border border-gray-700 rounded-full text-xs font-light h-8 tracking-wide max-w-[150px] px-3 text-center uppercase align-middle 
   hover:bg-gray-100 hover:border-gray-200 hover:text-gray-700 ${
     inWatchList ? "bg-red-500" : "bg-blue-500"
-  } text-white`}
+  }`}
         >
           {inWatchList ? "Remove from Watchlist" : "Add to Watchlist"}
         </button>

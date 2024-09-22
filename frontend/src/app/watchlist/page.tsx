@@ -1,5 +1,6 @@
 "use client";
 
+import timeAgo from "@/services/date";
 import { AppDispatch, RootState } from "@/store/store";
 import {
   fetchWatchlist,
@@ -56,13 +57,17 @@ export default function WatchlistPage() {
                   </p>
                 </div>
               </div>
-              <button
-                className={`inline-block bg-transparent text-[#171C20] cursor-pointer border border-gray-700 rounded-full text-xs font-light h-8 tracking-wide max-w-[150px] px-3 text-center uppercase align-middle 
+
+              <div>
+                <button
+                  className={`inline-block bg-transparent text-[#171C20] cursor-pointer border border-gray-700 rounded-full text-xs font-light h-8 tracking-wide max-w-[150px] px-3 text-center uppercase align-middle 
                     hover:bg-red-300 hover:border-red-300 hover:text-gray-700`}
-                onClick={() => handleRemoveMovie(movie.Movie.movieID)}
-              >
-                Remove
-              </button>
+                  onClick={() => handleRemoveMovie(movie.Movie.movieID)}
+                >
+                  Remove
+                </button>
+                <p className="text-xs mt-10">{timeAgo(movie.dateAdded)}</p>
+              </div>
             </li>
           ))}
         </ul>
