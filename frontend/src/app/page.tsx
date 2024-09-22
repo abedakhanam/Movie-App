@@ -99,14 +99,16 @@ export default function Home() {
 
   return (
     <div className="p-4">
-      <DiscoveryHeader
-        genre={genre}
-        ratings={ratings}
-        type={type}
-        certificate={certificate}
-        onFilterChange={handleFilterChange}
-      />
-      <h1 className="text-3xl font-bold mb-6">Movies List</h1>
+      <div className="mb-4">
+        <DiscoveryHeader
+          genre={genre}
+          ratings={ratings}
+          type={type}
+          certificate={certificate}
+          onFilterChange={handleFilterChange}
+        />
+      </div>
+      <h1 className="text-2xl font-bold mb-2">Movies List</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {movies.length > 0 ? (
           movies.map((movie) => (

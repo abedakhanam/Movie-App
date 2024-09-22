@@ -81,7 +81,10 @@ export default function Header() {
                   href="/watchlist"
                   className="hover:bg-white hover:text-black p-2"
                 >
-                  WatchList {watchlistCount > 0 ? `(${watchlistCount})` : null}
+                  WatchList{" "}
+                  <p className="inline bg-yellow-300 p-1 rounded-3xl text-black">
+                    {watchlistCount > 0 ? `${watchlistCount}` : null}
+                  </p>
                 </Link>
               </li>
               {navUserLinks.map((link) => (

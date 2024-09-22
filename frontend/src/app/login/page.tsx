@@ -42,7 +42,7 @@ export default function LoginPage() {
       } else {
         const { userID, firstName, lastName, token, email } = response.data;
         console.log(response.data);
-        
+
         // Dispatch the login action
         dispatch(
           login({
@@ -103,7 +103,8 @@ export default function LoginPage() {
         <div className="flex items-center justify-between">
           <button
             type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            className={`w-full max-w-[150px] h-8 text-xs font-light tracking-wide text-center uppercase align-middle rounded-full px-3 
+              border cursor-pointer bg-red-400 border-red-500 hover:bg-red-500 text-white`}
           >
             Login
           </button>

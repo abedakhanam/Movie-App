@@ -70,11 +70,13 @@ const DiscoveryHeader: React.FC<DiscoveryHeaderProps> = ({
   };
 
   return (
-    <div className="bg-gray-100 p-4 rounded-lg shadow-md">
+    <div className="bg-gray- p-4 rounded-lg shadow-sm">
       <div className="flex flex-col md:flex-row items-center justify-between">
         {/* Genre Filter */}
         <select
-          className="border border-gray-300 rounded-md p-2 mb-4 md:mb-0 md:mr-4 w-full md:w-1/4"
+          // className="border border-gray-300 rounded-md p-2 mb-4 md:mb-0 md:mr-4 w-full md:w-1/4"
+          className={`w-full max-w-[250px] h-8 text-xs font-light tracking-wide text-center uppercase align-middle rounded-full px-3
+            border cursor-pointer bg-red-50 border-red-500 hover:bg-red-100 text-red-800 overflow-auto custom-scrollbar`}
           value={selectedGenre}
           onChange={handleGenreChange}
         >
@@ -88,7 +90,9 @@ const DiscoveryHeader: React.FC<DiscoveryHeaderProps> = ({
 
         {/* Rating Filter */}
         <select
-          className="border border-gray-300 rounded-md p-2 w-full md:w-1/4"
+          // className="border border-gray-300 rounded-md p-2 w-full md:w-1/4"
+          className={`w-full max-w-[250px] h-8 text-xs font-light tracking-wide text-center uppercase align-middle rounded-full px-3
+            border cursor-pointer bg-red-50 border-red-500 hover:bg-red-100 text-red-800 overflow-auto custom-scrollbar`}
           value={selectedRating}
           onChange={handleRatingChange}
         >
@@ -102,7 +106,9 @@ const DiscoveryHeader: React.FC<DiscoveryHeaderProps> = ({
 
         {/* Rating Filter */}
         <select
-          className="border border-gray-300 rounded-md p-2 w-full md:w-1/4"
+          // className="border border-gray-300 rounded-md p-2 w-full md:w-1/4"
+          className={`w-full max-w-[250px] h-8 text-xs font-light tracking-wide text-center uppercase align-middle rounded-full px-3
+            border cursor-pointer bg-red-50 border-red-500 hover:bg-red-100 text-red-800 overflow-auto custom-scrollbar`}
           value={selectedType}
           onChange={handleTypeChange}
         >
@@ -116,7 +122,9 @@ const DiscoveryHeader: React.FC<DiscoveryHeaderProps> = ({
 
         {/* Certificate Filter */}
         <select
-          className="border border-gray-300 rounded-md p-2 w-full md:w-1/4"
+          // className="border border-gray-300 rounded-md p-2 w-full md:w-1/4"
+          className={`w-full max-w-[250px] h-8 text-xs font-light tracking-wide text-center uppercase align-middle rounded-full px-3
+            border cursor-pointer bg-red-50 border-red-500 hover:bg-red-100 text-red-800 overflow-auto custom-scrollbar`}
           value={selectedCertificate}
           onChange={handleCertificateChange}
         >
