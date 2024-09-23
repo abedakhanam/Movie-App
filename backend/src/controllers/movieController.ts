@@ -27,8 +27,8 @@ const getAllMovies = async (req: Request, res: Response) => {
     }
     if (search) {
       whereClause[Op.or] = [
-        {name: { [Op.iLike]: `%${search}%` }},
-        {description: { [Op.iLike]: `%${search}%` }},
+        { name: { [Op.iLike]: `%${search}%` } },
+        { description: { [Op.iLike]: `%${search}%` } },
       ];
     }
 
@@ -52,10 +52,11 @@ const getAllMovies = async (req: Request, res: Response) => {
           "rating",
           "type",
           "certificate",
+          "createdAt",
         ],
         limit,
         offset,
-        order: [["movieID", "ASC"]],
+        order: [["createdAt", "ASC"]],
       }
     );
 

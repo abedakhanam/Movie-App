@@ -6,6 +6,7 @@ import GenreModel from "../models/Genre";
 import MovieGenreModel from "../models/MovieGenre";
 import ReviewModel from "../models/Review";
 import WatchListModel from "../models/WatchList";
+import UserMovieModel from "../models/UserMovie";
 
 const sequelize = new Sequelize("moviewebapp", "mysqlclient", "admin", {
   host: "localhost",
@@ -18,6 +19,7 @@ const Genre = GenreModel(sequelize);
 const MovieGenre = MovieGenreModel(sequelize);
 const Review = ReviewModel(sequelize);
 const WatchList = WatchListModel(sequelize);
+const UserMovie = UserMovieModel(sequelize);
 
 Movie.belongsToMany(Genre, {
   through: MovieGenre,
@@ -50,6 +52,18 @@ Movie.belongsToMany(User, {
 // Define explicit associations between WatchList and User, Movie
 WatchList.belongsTo(User, { foreignKey: "userID", onDelete: "CASCADE" });
 WatchList.belongsTo(Movie, { foreignKey: "movieID", onDelete: "CASCADE" });
+
+// Define associations for UserMovie
+User.belongsToMany(Movie, {
+  through: UserMovie,
+  foreignKey: "userID",
+  onDelete: "CASCADE",
+});
+Movie.belongsToMany(User, {
+  through: UserMovie,
+  foreignKey: "movieID",
+  onDelete: "CASCADE",
+});
 
 export default sequelize;
 export { User, Movie, Genre, MovieGenre, Review, WatchList };

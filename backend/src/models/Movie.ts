@@ -18,6 +18,7 @@ interface MovieAttributes {
   alcohol?: string | null;
   frightening?: string | null;
   description?: string | null;
+  createdAt?: Date;
 }
 
 class Movie extends Model<MovieAttributes> implements MovieAttributes {
@@ -37,6 +38,7 @@ class Movie extends Model<MovieAttributes> implements MovieAttributes {
   public alcohol?: string | null;
   public frightening?: string | null;
   public description?: string | null;
+  public createdAt?: Date | undefined;
 }
 
 const MovieModel = (sequelize: Sequelize) => {
@@ -106,6 +108,10 @@ const MovieModel = (sequelize: Sequelize) => {
       description: {
         type: DataTypes.TEXT,
         allowNull: true,
+      },
+      createdAt: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
       },
     },
     {

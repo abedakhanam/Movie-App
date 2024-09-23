@@ -46,10 +46,6 @@ const ReviewModel = (sequelize: Sequelize) => {
       rating: {
         type: DataTypes.INTEGER,
         allowNull: true,
-        // validate: {
-        //   min: 1,
-        //   max: 10,
-        // },
       },
       review: {
         type: DataTypes.TEXT,
