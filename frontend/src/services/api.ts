@@ -12,6 +12,7 @@ export const getAllMovies = async (
     rating?: string;
     type?: string;
     certificate?: string;
+    search?: string;
   }
 ) => {
   try {
