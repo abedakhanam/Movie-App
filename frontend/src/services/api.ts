@@ -134,7 +134,6 @@ export const deleteFromWatchList = async (
 };
 
 // get all movies from watchlist
-// Get all movies in the watchlist
 export const getWatchList = async (token: string | null) => {
   const response = await api.get("/watchlist", {
     headers: {
@@ -142,4 +141,70 @@ export const getWatchList = async (token: string | null) => {
     },
   });
   return response.data.movies;
+};
+
+export const getUserMovies = async (token: string | null) => {
+  try {
+    const response = await api.get("/usermovie", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    // console.log(`user movies: ${JSON.stringify(response.data)}}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user movies", error);
+    throw error;
+  }
+};
+
+// Add a user movie
+export const createMovie = async (formData: FormData, token: string | null) => {
+  try {
+    const response = await api.post("/usermovie", formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error creating movie:", error);
+    throw error;
+  }
+};
+
+// Update a user movie
+export const updateMovie = async (
+  id: number,
+  formData: FormData,
+  token: string | null
+) => {
+  try {
+    const response = await api.put(`/usermovie/${id}`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error updating movie", error);
+    throw error;
+  }
+};
+
+// Delete a user movie
+export const deleteMovie = async (id: number, token: string | null) => {
+  try {
+    const response = await api.delete(`/usermovie/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Error deleting movie", error);
+    throw error;
+  }
 };

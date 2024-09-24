@@ -7,6 +7,7 @@ interface Movie {
   rating: number;
   type: string;
   certificate: string;
+  createdAt: string;
 }
 interface MovieState {
   movies: Movie[];

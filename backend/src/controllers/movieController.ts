@@ -13,7 +13,6 @@ import path from "path";
 import sharp from "sharp";
 import multer from "multer";
 import { upload } from "../helpers/multer";
-import { createMovieSchema } from "../helpers/movieValidation";
 
 // All movies with filtering
 const getAllMovies = async (req: Request, res: Response) => {
@@ -68,7 +67,7 @@ const getAllMovies = async (req: Request, res: Response) => {
         ],
         limit,
         offset,
-        order: [["movieID", "ASC"]],
+        order: [["createdAt", "DESC"]],
       }
     );
 
@@ -135,6 +134,7 @@ export const createMovie = async (req: Request, res: Response) => {
       });
 
       // Find or create genres and associate them
+      console.log(`req.body.genres    ${req.body.genres}`);
       if (req.body.genres) {
         const genres = await Genre.findAll({
           where: { genreID: req.body.genres },
@@ -359,53 +359,6 @@ const deleteMovie = async (req: Request, res: Response) => {
     return res.status(500).json({ message: "Failed to delete movie" });
   }
 };
-
-// Update a movie
-// export const updateMovie = async (req: Request, res: Response) => {
-//   try {
-//     const movieID = req.params.id;
-
-//     // Validate request body
-//     const validatedData = updateMovieSchema.parse(req.body);
-
-//     // Find the movie by ID
-//     const movie = await Movie.findByPk(movieID);
-//     if (!movie) {
-//       return res.status(404).json({ error: "Movie not found" });
-//     }
-
-//     // Update the movie details
-//     await movie.update(validatedData);
-
-//     // If genres are passed, update the MovieGenre association
-//     if (validatedData.genres) {
-//       const genres = await Genre.findAll({
-//         where: { genreID: validatedData.genres },
-//       });
-
-//       if (genres.length !== validatedData.genres.length) {
-//         return res
-//           .status(400)
-//           .json({ error: "One or more genres are invalid" });
-//       }
-
-//       // First, clear existing genres for this movie
-//       await MovieGenre.destroy({ where: { movieID: movie.movieID } });
-
-//       // Add new associations in the MovieGenre table
-//       await MovieGenre.bulkCreate(
-//         genres.map((genre) => ({
-//           movieID: movie.movieID,
-//           genreID: genre.genreID,
-//         }))
-//       );
-//     }
-
-//     return res.status(200).json(movie);
-//   } catch (error) {
-//     return res.status(400).json({ message: "failed to update movie" });
-//   }
-// };
 
 //one movie details + reviews
 const getMoviebyPK = async (req: Request, res: Response) => {
