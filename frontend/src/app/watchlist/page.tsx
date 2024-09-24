@@ -51,7 +51,11 @@ export default function WatchlistPage() {
                 <>
                   <div className="flex items-center">
                     <img
-                      src={movie.Movie.thumbnailUrl || "/placeholder-image.jpg"}
+                      src={
+                        movie.Movie.thumbnailUrl.startsWith("http")
+                          ? movie.Movie.thumbnailUrl
+                          : `http://localhost:5000${movie.Movie.thumbnailUrl}`
+                      }
                       alt={movie.Movie.name || "Movie"}
                       className="w-16 h-24 object-cover rounded-lg mr-5 shadow-md hover:scale-105 transition-transform duration-300"
                     />

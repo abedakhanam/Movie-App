@@ -66,6 +66,11 @@ const MovieCard: React.FC<MovieCardProps> = ({
     router.push(`/movies/${movieID}`);
   };
 
+  // Prepend the backend URL to local images
+  const imageUrl = thumbnailUrl.startsWith("http")
+    ? thumbnailUrl
+    : `http://localhost:5000${thumbnailUrl}`;
+
   return (
     <div
       key={movieID}
@@ -73,7 +78,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
     >
       <div onClick={goToDetails} className="cursor-pointer">
         <img
-          src={thumbnailUrl}
+          src={imageUrl}
           alt={name}
           className="w-full h-64 object-cover rounded-md mb-4"
         />

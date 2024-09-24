@@ -66,4 +66,4 @@ Movie.belongsToMany(User, {
 });
 
 export default sequelize;
-export { User, Movie, Genre, MovieGenre, Review, WatchList };
+export { User, Movie, Genre, MovieGenre, Review, WatchList, UserMovie };

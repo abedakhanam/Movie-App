@@ -1,7 +1,18 @@
 import { Request, Response } from "express";
-import { Genre, Movie, Review } from "../config/database";
+import {
+  Genre,
+  Movie,
+  MovieGenre,
+  Review,
+  UserMovie,
+} from "../config/database";
 import reviewSchema from "../helpers/reviewValidation";
 import { Op } from "sequelize";
+
+import path from "path";
+import sharp from "sharp";
+import multer from "multer";
+import { upload } from "../helpers/multer";
 
 // All movies with filtering
 const getAllMovies = async (req: Request, res: Response) => {
@@ -56,7 +67,7 @@ const getAllMovies = async (req: Request, res: Response) => {
         ],
         limit,
         offset,
-        order: [["createdAt", "ASC"]],
+        order: [["movieID", "ASC"]],
       }
     );
 
@@ -75,6 +86,197 @@ const getAllMovies = async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Failed to fetch movies", error });
   }
 };
+
+// Create a movie
+export const createMovie = async (req: Request, res: Response) => {
+  if (!req.user || !req.user.userID) {
+    return res
+      .status(401)
+      .json({ message: "Unauthorized: User not authenticated" });
+  }
+  const userID = parseInt(req.user?.userID);
+  upload(req, res, async (err) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ error: err.message });
+    } else if (err) {
+      return res.status(400).json({ error: "Unknown error occurred" });
+    }
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    try {
+      // Check if there's a file and retrieve its path
+      let imagePath;
+      if (req.file) {
+        const compressedFileName = `compressed-${req.file.filename}`;
+        const compressedImagePath = path.join("uploads", compressedFileName);
+
+        // Compress and save the image locally
+        await sharp(req.file.path)
+          .resize(600) // Resize the image to 600px width
+          .jpeg({ quality: 60 }) // Compress the image
+          .toFile(compressedImagePath); // Save the compressed image locally
+
+        imagePath = `/${compressedFileName}`; // Store the path to the compressed image without 'uploads'
+
+        // Optionally, clean up the original image after compression
+        // fs.unlinkSync(req.file.path); // Delete the original uploaded image
+      }
+      // Validate request body
+      // console.log("dgd" + imagePath);
+      //const validatedData = createMovieSchema.parse(req.body);
+      // const reqReleaseyr = parseInt(req.body.releaseYear);
+      // Create movie in the Movie table
+      const newMovie = await Movie.create({
+        name: req.body.name,
+        releaseYear: parseInt(req.body.releaseYear), //validTE LATER
+        rating: parseInt(req.body.rating),
+        votes: parseInt(req.body.votes),
+        duration: parseInt(req.body.duration),
+        type: req.body.type,
+        certificate: req.body.certificate,
+        description: req.body.description,
+        thumbnailUrl: imagePath,
+      });
+
+      // Find or create genres and associate them
+      if (req.body.genres) {
+        const genres = await Genre.findAll({
+          where: { genreID: req.body.genres },
+        });
+
+        if (genres.length !== req.body.genres.length) {
+          return res
+            .status(400)
+            .json({ error: "One or more genres are invalid" });
+        }
+
+        // Populate MovieGenre join table
+        await MovieGenre.bulkCreate(
+          genres.map((genre) => ({
+            movieID: newMovie.movieID,
+            genreID: genre.genreID,
+          }))
+        );
+      }
+
+      //populate usermovie table
+      await UserMovie.create({
+        movieID: newMovie.movieID,
+        userID: userID,
+      });
+
+      return res.status(201).json(newMovie);
+    } catch (error) {
+      return res.status(400).json({ message: error });
+    }
+  });
+};
+
+// // Create a movie
+// export const createMovie = async (req: Request, res: Response) => {
+//   if (!req.user || !req.user.userID) {
+//     return res
+//       .status(401)
+//       .json({ message: "Unauthorized: User not authenticated" });
+//   }
+//   const userID = parseInt(req.user?.userID);
+//   try {
+//     // Validate request body
+//     const validatedData = createMovieSchema.parse(req.body);
+
+//     // Create movie in the Movie table
+//     const newMovie = await Movie.create({
+//       name: validatedData.name,
+//       releaseYear: validatedData.releaseYear,
+//       rating: validatedData.rating,
+//       votes: validatedData.votes,
+//       duration: validatedData.duration,
+//       type: validatedData.type,
+//       certificate: validatedData.certificate,
+//       description: validatedData.description,
+//     });
+
+//     // Find or create genres and associate them
+//     if (validatedData.genres) {
+//       const genres = await Genre.findAll({
+//         where: { genreID: validatedData.genres },
+//       });
+
+//       if (genres.length !== validatedData.genres.length) {
+//         return res
+//           .status(400)
+//           .json({ error: "One or more genres are invalid" });
+//       }
+
+//       // Populate MovieGenre join table
+//       await MovieGenre.bulkCreate(
+//         genres.map((genre) => ({
+//           movieID: newMovie.movieID,
+//           genreID: genre.genreID,
+//         }))
+//       );
+//     }
+
+//     //populate usermovie table
+//     await UserMovie.create({
+//       movieID: newMovie.movieID,
+//       userID: userID,
+//     });
+
+//     return res.status(201).json(newMovie);
+//   } catch (error) {
+//     return res.status(400).json({ message: "failed to create a movie" });
+//   }
+// };
+
+// Update a movie
+// export const updateMovie = async (req: Request, res: Response) => {
+//   try {
+//     const movieID = req.params.id;
+
+//     // Validate request body
+//     const validatedData = updateMovieSchema.parse(req.body);
+
+//     // Find the movie by ID
+//     const movie = await Movie.findByPk(movieID);
+//     if (!movie) {
+//       return res.status(404).json({ error: "Movie not found" });
+//     }
+
+//     // Update the movie details
+//     await movie.update(validatedData);
+
+//     // If genres are passed, update the MovieGenre association
+//     if (validatedData.genres) {
+//       const genres = await Genre.findAll({
+//         where: { genreID: validatedData.genres },
+//       });
+
+//       if (genres.length !== validatedData.genres.length) {
+//         return res
+//           .status(400)
+//           .json({ error: "One or more genres are invalid" });
+//       }
+
+//       // First, clear existing genres for this movie
+//       await MovieGenre.destroy({ where: { movieID: movie.movieID } });
+
+//       // Add new associations in the MovieGenre table
+//       await MovieGenre.bulkCreate(
+//         genres.map((genre) => ({
+//           movieID: movie.movieID,
+//           genreID: genre.genreID,
+//         }))
+//       );
+//     }
+
+//     return res.status(200).json(movie);
+//   } catch (error) {
+//     return res.status(400).json({ message: "failed to update movie" });
+//   }
+// };
 
 //one movie details + reviews
 const getMoviebyPK = async (req: Request, res: Response) => {
