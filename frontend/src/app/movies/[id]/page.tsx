@@ -127,7 +127,11 @@ const MovieDetails = () => {
     <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg">
       <div className="flex items-center space-x-4 mb-4">
         <img
-          src={movie.thumbnailUrl}
+          src={
+            movie.thumbnailUrl.startsWith("http")
+              ? movie.thumbnailUrl
+              : `http://localhost:5000${movie.thumbnailUrl}`
+          }
           alt={movie.name}
           className="w-48 h-auto rounded-lg"
         />

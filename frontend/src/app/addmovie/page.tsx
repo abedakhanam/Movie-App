@@ -45,6 +45,9 @@ export default function CreateMovie() {
   const token = useSelector((state: RootState) => state.user.token);
   const { register, handleSubmit, reset } = useForm<MovieForm>();
   const [movies, setMovies] = useState<Movie[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
   const [editingMovieID, setEditingMovieID] = useState<number | null>(null);
   const isFetching = useRef(false);
   // Fetch all user movies
@@ -58,6 +61,7 @@ export default function CreateMovie() {
       } catch (error) {
         console.error("Error fetching user movies:", error);
       } finally {
+        setLoading(false);
         isFetching.current = false;
       }
     }
