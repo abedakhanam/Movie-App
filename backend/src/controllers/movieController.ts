@@ -167,6 +167,7 @@ export const createMovie = async (req: Request, res: Response) => {
   });
 };
 
+//get all user m
 export const getAllUserMovies = async (req: Request, res: Response) => {
   // Check if the user is authenticated
   if (!req.user || !req.user.userID) {
@@ -176,8 +177,6 @@ export const getAllUserMovies = async (req: Request, res: Response) => {
   }
 
   const userID = parseInt(req.user.userID);
-
-  // console.log(userID);
 
   try {
     // Find all movies created by the user using the UserMovie table
@@ -223,6 +222,106 @@ export const getAllUserMovies = async (req: Request, res: Response) => {
       message: "Failed to retrieve user movies",
     });
   }
+};
+
+//update
+export const updateMovie = async (req: Request, res: Response) => {
+  if (!req.user || !req.user.userID) {
+    return res
+      .status(401)
+      .json({ message: "Unauthorized: User not authenticated" });
+  }
+  const userID = parseInt(req.user.userID);
+  const { id } = req.params;
+  const movieID = parseInt(id);
+
+  if (isNaN(movieID)) {
+    return res.status(400).json({ message: "Invalid movie ID" });
+  }
+
+  upload(req, res, async (err) => {
+    if (err instanceof multer.MulterError) {
+      return res.status(400).json({ error: err.message });
+    } else if (err) {
+      return res.status(400).json({ error: "Unknown error occurred" });
+    }
+
+    try {
+      // Check if the movie exists and belongs to the user
+      const userMovie = await UserMovie.findOne({
+        where: { userID, movieID },
+      });
+
+      if (!userMovie) {
+        return res
+          .status(404)
+          .json({ message: "Movie not found or does not belong to this user" });
+      }
+
+      const movie = await Movie.findByPk(movieID);
+      if (!movie) {
+        return res.status(404).json({ message: "Movie not found" });
+      }
+
+      // Process new image if uploaded
+      let imagePath = movie.thumbnailUrl;
+      if (req.file) {
+        const compressedFileName = `compressed-${req.file.filename}`;
+        const compressedImagePath = path.join("uploads", compressedFileName);
+
+        await sharp(req.file.path)
+          .resize(600)
+          .jpeg({ quality: 60 })
+          .toFile(compressedImagePath);
+
+        imagePath = `/${compressedFileName}`;
+      }
+
+      // Update movie details
+      await movie.update({
+        name: req.body.name || movie.name,
+        releaseYear: parseInt(req.body.releaseYear) || movie.releaseYear,
+        rating: parseInt(req.body.rating) || movie.rating,
+        votes: parseInt(req.body.votes) || movie.votes,
+        duration: parseInt(req.body.duration) || movie.duration,
+        type: req.body.type || movie.type,
+        certificate: req.body.certificate || movie.certificate,
+        description: req.body.description || movie.description,
+        thumbnailUrl: imagePath,
+      });
+
+      // Update genres if provided
+      if (req.body.genres) {
+        // Remove existing genres
+        await MovieGenre.destroy({ where: { movieID } });
+
+        // Add new genres
+        const genres = await Genre.findAll({
+          where: { genreID: req.body.genres },
+        });
+
+        if (genres.length !== req.body.genres.length) {
+          return res
+            .status(400)
+            .json({ error: "One or more genres are invalid" });
+        }
+
+        await MovieGenre.bulkCreate(
+          genres.map((genre) => ({
+            movieID: movie.movieID,
+            genreID: genre.genreID,
+          }))
+        );
+      }
+
+      return res
+        .status(200)
+        .json({ message: "Movie updated successfully", movie });
+    } catch (error) {
+      console.error("Error in updateMovie:", error);
+      return res.status(500).json({ message: "Failed to update movie" });
+    }
+  });
 };
 
 const deleteMovie = async (req: Request, res: Response) => {
