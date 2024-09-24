@@ -6,11 +6,13 @@ import {
   fetchWatchlist,
   removeMovieFromWatchlist,
 } from "@/store/watchlistSlice";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function WatchlistPage() {
   const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
   const token = useSelector((state: RootState) => state.user.token);
   const watchlist = useSelector((state: RootState) => state.watchlist.movies);
   const loading = useSelector((state: RootState) => state.watchlist.loading);
@@ -31,6 +33,10 @@ export default function WatchlistPage() {
     }
   };
 
+  const goToDetails = (id: any) => {
+    router.push(`/movies/${id}`);
+  };
+
   if (loading) {
     return <p>Loading...</p>;
   }
@@ -45,6 +51,7 @@ export default function WatchlistPage() {
           {watchlist.map((movie) => (
             <li
               key={movie.movieID}
+              onClick={() => goToDetails(movie.movieID)}
               className="flex items-center justify-between bg-white shadow-lg hover:shadow-xl rounded-lg p-5 transition-shadow duration-300 ease-in-out"
             >
               {movie.Movie ? (

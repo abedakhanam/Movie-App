@@ -50,8 +50,8 @@ const MovieDetails = () => {
       router.push("/login");
     }
     // If both rating and review are empty, show an error message
-    if (!rating && !review.trim()) {
-      setError("Please provide a rating or review.");
+    if (!rating) {
+      setError("Please provide a rating.");
       return;
     }
     const reviewContent = review.trim() === "" ? null : review.trim();
@@ -90,7 +90,7 @@ const MovieDetails = () => {
         }
       }
       // console.log(newReview);
-      setSuccess("Review submitted successfully!");
+      setSuccess("Submitted successfully!");
       setReview("");
       setRating(null);
     } catch (err: any) {

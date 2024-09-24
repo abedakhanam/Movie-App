@@ -9,6 +9,7 @@ import {
   updateMovie,
 } from "@/services/api";
 import { RootState } from "@/store/store";
+import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
@@ -42,6 +43,7 @@ type Movie = {
 };
 
 export default function CreateMovie() {
+  const router = useRouter();
   const token = useSelector((state: RootState) => state.user.token);
   const { register, handleSubmit, reset } = useForm<MovieForm>();
   const [movies, setMovies] = useState<Movie[]>([]);
@@ -85,28 +87,37 @@ export default function CreateMovie() {
     formData.append("genres", data.genre);
 
     try {
+      setError(null);
+      setSuccess(null);
       if (editingMovieID) {
         // If editing, update movie
         await updateMovie(editingMovieID, formData, token);
+        setSuccess("Movie updated successfully!");
       } else {
         // Create a new movie
         const newMovie = await createMovie(formData, token);
         setMovies((prevMovies) => [...prevMovies, newMovie]);
+        setSuccess("Movie created successfully!");
       }
       reset();
       setEditingMovieID(null);
     } catch (error) {
-      console.error("Error submitting movie:", error);
+      setError("Error, create/update");
     }
   };
 
   // Handle delete movie
   const handleDelete = async (id: number) => {
     try {
-      await deleteMovie(id, token);
-      setMovies(movies.filter((movie) => movie.movieID !== id));
+      setError(null);
+      setSuccess(null);
+      const m = await deleteMovie(id, token);
+      if (m) {
+        setMovies(movies.filter((movie) => movie.movieID !== id));
+      }
+      setSuccess("Movie deleted successfully!");
     } catch (error) {
-      console.error("Error deleting movie:", error);
+      setError("Failed to delete movie");
     }
   };
 
@@ -114,6 +125,10 @@ export default function CreateMovie() {
   const handleEdit = (movie: Movie) => {
     setEditingMovieID(movie.movieID);
     reset(movie);
+  };
+
+  const goToDetails = (id: any) => {
+    router.push(`/movies/${id}`);
   };
 
   return (
@@ -228,6 +243,10 @@ export default function CreateMovie() {
             />
           </div>
 
+          {/* Error or Success Messages */}
+          {error && <p className="text-red-500 mb-4">{error}</p>}
+          {success && <p className="text-green-500 mb-4">{success}</p>}
+
           <button className="bg-blue-500 text-white p-2 rounded" type="submit">
             {editingMovieID ? "Update Movie" : "Create Movie"}
           </button>
@@ -240,6 +259,7 @@ export default function CreateMovie() {
             {movies.map((movie) => (
               <div
                 key={movie.movieID}
+                onClick={() => goToDetails(movie.movieID)}
                 className="flex items-center justify-between bg-white shadow-lg hover:shadow-xl rounded-lg p-5 transition-shadow duration-300 ease-in-out"
               >
                 <div className="flex items-center">
