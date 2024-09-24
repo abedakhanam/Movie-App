@@ -13,6 +13,7 @@ import path from "path";
 import sharp from "sharp";
 import multer from "multer";
 import { upload } from "../helpers/multer";
+import { createMovieSchema } from "../helpers/movieValidation";
 
 // All movies with filtering
 const getAllMovies = async (req: Request, res: Response) => {
@@ -95,6 +96,7 @@ export const createMovie = async (req: Request, res: Response) => {
       .json({ message: "Unauthorized: User not authenticated" });
   }
   const userID = parseInt(req.user?.userID);
+
   upload(req, res, async (err) => {
     if (err instanceof multer.MulterError) {
       return res.status(400).json({ error: err.message });
@@ -119,15 +121,7 @@ export const createMovie = async (req: Request, res: Response) => {
           .toFile(compressedImagePath); // Save the compressed image locally
 
         imagePath = `/${compressedFileName}`; // Store the path to the compressed image without 'uploads'
-
-        // Optionally, clean up the original image after compression
-        // fs.unlinkSync(req.file.path); // Delete the original uploaded image
       }
-      // Validate request body
-      // console.log("dgd" + imagePath);
-      //const validatedData = createMovieSchema.parse(req.body);
-      // const reqReleaseyr = parseInt(req.body.releaseYear);
-      // Create movie in the Movie table
       const newMovie = await Movie.create({
         name: req.body.name,
         releaseYear: parseInt(req.body.releaseYear), //validTE LATER
@@ -160,7 +154,6 @@ export const createMovie = async (req: Request, res: Response) => {
           }))
         );
       }
-
       //populate usermovie table
       await UserMovie.create({
         movieID: newMovie.movieID,
@@ -174,62 +167,99 @@ export const createMovie = async (req: Request, res: Response) => {
   });
 };
 
-// // Create a movie
-// export const createMovie = async (req: Request, res: Response) => {
-//   if (!req.user || !req.user.userID) {
-//     return res
-//       .status(401)
-//       .json({ message: "Unauthorized: User not authenticated" });
-//   }
-//   const userID = parseInt(req.user?.userID);
-//   try {
-//     // Validate request body
-//     const validatedData = createMovieSchema.parse(req.body);
+export const getAllUserMovies = async (req: Request, res: Response) => {
+  // Check if the user is authenticated
+  if (!req.user || !req.user.userID) {
+    return res
+      .status(401)
+      .json({ message: "Unauthorized: User not authenticated" });
+  }
 
-//     // Create movie in the Movie table
-//     const newMovie = await Movie.create({
-//       name: validatedData.name,
-//       releaseYear: validatedData.releaseYear,
-//       rating: validatedData.rating,
-//       votes: validatedData.votes,
-//       duration: validatedData.duration,
-//       type: validatedData.type,
-//       certificate: validatedData.certificate,
-//       description: validatedData.description,
-//     });
+  const userID = parseInt(req.user.userID);
 
-//     // Find or create genres and associate them
-//     if (validatedData.genres) {
-//       const genres = await Genre.findAll({
-//         where: { genreID: validatedData.genres },
-//       });
+  // console.log(userID);
 
-//       if (genres.length !== validatedData.genres.length) {
-//         return res
-//           .status(400)
-//           .json({ error: "One or more genres are invalid" });
-//       }
+  try {
+    // Find all movies created by the user using the UserMovie table
+    const userMovies = await UserMovie.findAll({
+      where: { userID },
+      attributes: ["movieID"],
+    });
+    // console.log(`userMovies    ${JSON.stringify(userMovies)}`);
+    if (!userMovies)
+      return res
+        .status(400)
+        .json({ message: "User has not created any movies" });
 
-//       // Populate MovieGenre join table
-//       await MovieGenre.bulkCreate(
-//         genres.map((genre) => ({
-//           movieID: newMovie.movieID,
-//           genreID: genre.genreID,
-//         }))
-//       );
-//     }
+    // Extract movieIDs from the result
+    const movieIDs = userMovies.map((um) => um.movieID);
 
-//     //populate usermovie table
-//     await UserMovie.create({
-//       movieID: newMovie.movieID,
-//       userID: userID,
-//     });
+    // Now, fetch movie details for these movieIDs
+    const movieDetails = await Movie.findAll({
+      where: {
+        movieID: {
+          [Op.in]: movieIDs,
+        },
+      },
+      attributes: [
+        "movieID",
+        "name",
+        "releaseYear",
+        "rating",
+        "votes",
+        "duration",
+        "type",
+        "certificate",
+        "description",
+        "thumbnailUrl",
+        "createdAt",
+      ],
+      order: [["createdAt", "DESC"]], // Sort by createdAt in descending order
+    });
 
-//     return res.status(201).json(newMovie);
-//   } catch (error) {
-//     return res.status(400).json({ message: "failed to create a movie" });
-//   }
-// };
+    return res.status(200).json(movieDetails);
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to retrieve user movies",
+    });
+  }
+};
+
+const deleteMovie = async (req: Request, res: Response) => {
+  if (!req.user || !req.user.userID) {
+    return res
+      .status(401)
+      .json({ message: "Unauthorized: User not authenticated" });
+  }
+  const userID = parseInt(req.user.userID);
+  const { id } = req.params;
+  const movieID = parseInt(id);
+  if (isNaN(movieID)) {
+    return res.status(400).json({ message: "Invalid movie ID" });
+  }
+  try {
+    const userMovie = await UserMovie.findOne({
+      where: { userID, movieID },
+    });
+    if (!userMovie) {
+      return res
+        .status(404)
+        .json({ message: "Review not found or does not belong to this user" });
+    }
+    // Delete
+    await userMovie.destroy();
+    // Check if the movie exists in the Movie table
+    const movie = await Movie.findOne({
+      where: { movieID },
+    });
+    if (movie) {
+      await movie.destroy();
+    }
+    return res.status(200).json({ message: "Movie successfully deleted" });
+  } catch (error) {
+    return res.status(500).json({ message: "Failed to delete movie" });
+  }
+};
 
 // Update a movie
 // export const updateMovie = async (req: Request, res: Response) => {
@@ -403,4 +433,11 @@ const deleteReview = async (req: Request, res: Response) => {
   }
 };
 
-export { getAllMovies, getMoviebyPK, fetchReview, addReview, deleteReview };
+export {
+  getAllMovies,
+  getMoviebyPK,
+  fetchReview,
+  addReview,
+  deleteReview,
+  deleteMovie,
+};
