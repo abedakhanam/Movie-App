@@ -88,7 +88,91 @@
 
 // // Call the function to start inserting data in chunks of 10,000
 // insertFakeMoviesInChunks(10000);
+//
+//
+//
+//
+//
 
+//
+//
+//
+//
+//
+//
+//
+// import sequelize, { Movie, Genre, MovieGenre } from "./database";
+
+// // Helper function to get random elements from an array
+// function getRandomGenres(genreIDs: number[], count: number): number[] {
+//   const shuffled = [...genreIDs].sort(() => 0.5 - Math.random());
+//   return shuffled.slice(0, count);
+// }
+
+// // Function to insert random genres for each movie
+// async function insertRandomGenres() {
+//   try {
+//     // Start transaction
+//     const transaction = await sequelize.transaction();
+
+//     // Fetch all movieIDs
+//     const movies = await Movie.findAll({
+//       attributes: ["movieID"],
+//       raw: true, // To get plain data
+//     });
+
+//     // Fetch all genreIDs
+//     const genres = await Genre.findAll({
+//       attributes: ["genreID"],
+//       raw: true,
+//     });
+
+//     const genreIDs = genres.map((genre) => genre.genreID);
+
+//     // For each movie, insert three random genres
+//     for (const movie of movies) {
+//       const movieID = movie.movieID;
+
+//       // Get three random genreIDs
+//       const randomGenres = getRandomGenres(genreIDs, 3);
+
+//       // Insert into MovieGenre table
+//       for (const genreID of randomGenres) {
+//         await MovieGenre.create(
+//           { movieID, genreID },
+//           { transaction } // Ensure this runs inside the transaction
+//         );
+//       }
+//     }
+
+//     // Commit the transaction
+//     await transaction.commit();
+//     console.log("Random genres inserted successfully.");
+//   } catch (error) {
+//     console.error("Error inserting random genres:", error);
+//     // Rollback in case of any error
+//     // await sequelize.transaction.rollback();
+//   }
+// }
+
+// // Execute the random genre insertion
+// insertRandomGenres();
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+//
+//
+//
+//
+//
 // import fs from "fs";
 // import path from "path";
 // import csvParser from "csv-parser";
@@ -210,6 +294,10 @@
 // // Execute the migration script
 // migrateData();
 
+//
+//
+//
+//
 // const csvFilePath = path.join(__dirname, "movies_with_posters.csv");
 
 // // Default thumbnail URL
