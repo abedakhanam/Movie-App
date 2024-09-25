@@ -1,4 +1,4 @@
-import { resetMovies, setSearchQuery } from "@/store/movieSilce";
+import { fetchInitialMovies, resetMovies, setSearchQuery } from "@/store/movieSilce";
 import { AppDispatch, RootState } from "@/store/store";
 import { debounce } from "lodash";
 import Image from "next/image";
@@ -27,7 +27,9 @@ const navUserLinks = [
 
 export default function Header() {
   const dispatch = useDispatch<AppDispatch>();
-  const searchQuery = useSelector((state: RootState) => state.movies.searchQuery);
+  const searchQuery = useSelector(
+    (state: RootState) => state.movies.searchQuery
+  );
   const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const isAuthenticated = useSelector(
@@ -40,18 +42,20 @@ export default function Header() {
   const debouncedSearch = useCallback(
     debounce((query: string) => {
       dispatch(setSearchQuery(query));
-    }, 200),
-    [dispatch]
+    }, 400),
+    [debounce]
   );
 
   const handleSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchInput(query);
-    if (query.trim() === '') {
+    if (query.trim() == "") {
       // If the search input is empty, reset the search state
-      dispatch(setSearchQuery(''));
+      dispatch(setSearchQuery(""));
       dispatch(resetMovies());
+      dispatch(fetchInitialMovies({ limit: 20 }));
     } else {
+      console.log(`header query2: ${query}`);
       debouncedSearch(query);
     }
   };

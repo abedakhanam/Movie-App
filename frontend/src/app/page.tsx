@@ -1,15 +1,9 @@
 "use client";
 import DiscoveryHeader from "@/components/base/DiscoveryHeader";
 import { certificate, genre, ratings, type } from "@/components/filter";
+import LoaderSpinner from "@/components/LoaderSpinner";
 import MovieCard from "@/components/MovieCard";
-import { getAllMovies } from "@/services/api";
-import {
-  incrementPage,
-  loadMoviesFailure,
-  loadMoviesRequest,
-  loadMoviesSuccess,
-  resetMovies,
-} from "@/store/movieSilce";
+import { fetchMovies, incrementPage, resetMovies } from "@/store/movieSilce";
 import { AppDispatch, RootState } from "@/store/store";
 import { fetchWatchlist } from "@/store/watchlistSlice";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -31,38 +25,26 @@ export default function Home() {
 
   const isFetchingWatchlist = useRef(0);
 
-  const fetchMovies = useCallback(
+  const fetchMoviesUseCallback = useCallback(
     async (currentPage: number, limit: number, appliedFilters = filters) => {
       if (isFetching.current) return; //prevent dup calls
       isFetching.current = true;
-      dispatch(loadMoviesRequest());
       try {
         // console.log(`fetchmocvie filters ${JSON.stringify(appliedFilters)}`);
-        let moviesData;
-        if (searchQuery.trim() === "") {
-          moviesData = await getAllMovies(currentPage, limit, appliedFilters);
-        } else {
-          moviesData = await getAllMovies(currentPage, limit, {
-            ...appliedFilters,
-            search: searchQuery,
-          });
-        }
-        // console.log(`moviesData ${JSON.stringify(moviesData)}`);
-        dispatch(
-          loadMoviesSuccess({
-            movies: moviesData,
-            hasMore: moviesData.length === limit,
-          })
+        const filterParams =
+          searchQuery.trim() !== ""
+            ? { ...appliedFilters, search: searchQuery }
+            : appliedFilters;
+        await dispatch(
+          fetchMovies({ page: currentPage, limit, filters: filterParams })
         );
+        // console.log(`moviesData ${JSON.stringify(moviesData)}`);
         if (token) {
           if (isFetchingWatchlist.current !== 0) return; //prevent dup calls
           isFetchingWatchlist.current = 1;
           dispatch(fetchWatchlist(token));
-          // console.log((await a).payload);
         }
         dispatch(incrementPage());
-      } catch (error) {
-        dispatch(loadMoviesFailure());
       } finally {
         isFetching.current = false;
       }
@@ -77,15 +59,15 @@ export default function Home() {
       !loading &&
       hasMore
     ) {
-      fetchMovies(page, limit);
+      fetchMoviesUseCallback(page, limit);
     }
-  }, [fetchMovies, loading, hasMore, page, limit]);
+  }, [fetchMoviesUseCallback, loading, hasMore, page, limit]);
 
   // Initial fetch of movies when the component mounts
   useEffect(() => {
     dispatch(resetMovies());
-    fetchMovies(1, limit);
-  }, [dispatch, fetchMovies, limit, filters, searchQuery]);
+    fetchMoviesUseCallback(1, limit);
+  }, [dispatch, fetchMoviesUseCallback, limit, filters, searchQuery]);
 
   // Scroll event listener
   useEffect(() => {
@@ -97,7 +79,7 @@ export default function Home() {
     setFilters(newFilters);
     // console.log(`newfilters ${JSON.stringify(filters)}`);
     dispatch(resetMovies());
-    fetchMovies(1, limit, newFilters); // Fetch movies again with new filters
+    fetchMoviesUseCallback(1, limit, newFilters); // Fetch movies again with new filters
   };
 
   return (
@@ -128,10 +110,10 @@ export default function Home() {
             </div>
           ))
         ) : (
-          <p className="text-center text-lg font-medium">No movies available</p>
+          <LoaderSpinner />
         )}
       </div>
-      {loading && <p>Loading more movies...</p>}
+      {loading && <LoaderSpinner />}
       {/* Loader element to trigger infinite scroll */}
     </div>
   );
