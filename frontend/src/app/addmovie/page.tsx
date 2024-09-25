@@ -1,5 +1,3 @@
-// "use client";
-// export default function AddMovie() {}
 "use client";
 
 import {
@@ -13,7 +11,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-// import Image from "next/image";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type MovieForm = {
   name: string;
@@ -62,6 +61,7 @@ export default function CreateMovie() {
         setMovies(userMovies || []);
       } catch (error) {
         console.error("Error fetching user movies:", error);
+        toast.error("Error fetching user movies");
       } finally {
         setLoading(false);
         isFetching.current = false;
@@ -69,8 +69,6 @@ export default function CreateMovie() {
     }
     fetchMovies();
   }, [token]);
-
-  const array = [1, 2];
 
   // Submit movie form
   const onSubmit = async (data: MovieForm) => {
@@ -88,43 +86,47 @@ export default function CreateMovie() {
 
     try {
       setError(null);
-      setSuccess(null);
       if (editingMovieID) {
         // If editing, update movie
         await updateMovie(editingMovieID, formData, token);
-        setSuccess("Movie updated successfully!");
+        toast.success("Movie updated successfully!");
       } else {
         // Create a new movie
         const newMovie = await createMovie(formData, token);
         setMovies((prevMovies) => [...prevMovies, newMovie]);
-        setSuccess("Movie created successfully!");
+        toast.success("Movie created successfully!");
       }
       reset();
       setEditingMovieID(null);
     } catch (error) {
-      setError("Error, create/update");
+      toast.error("Error while creating/updating movie");
     }
   };
 
   // Handle delete movie
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (e: any, id: number) => {
+    e.stopPropagation(); // Prevent navigation
     try {
-      setError(null);
-      setSuccess(null);
       const m = await deleteMovie(id, token);
       if (m) {
         setMovies(movies.filter((movie) => movie.movieID !== id));
       }
-      setSuccess("Movie deleted successfully!");
+      toast.success("Movie deleted successfully!");
     } catch (error) {
-      setError("Failed to delete movie");
+      toast.error("Failed to delete movie");
     }
   };
 
   // Handle edit movie
-  const handleEdit = (movie: Movie) => {
+  const handleEdit = (e: any, movie: Movie) => {
+    e.stopPropagation(); // Prevent navigation
     setEditingMovieID(movie.movieID);
     reset(movie);
+
+    window.scrollTo({
+      top: 0, // Scroll to the top of the page
+      behavior: "smooth", // smooth scrolling effect
+    });
   };
 
   const goToDetails = (id: any) => {
@@ -133,6 +135,7 @@ export default function CreateMovie() {
 
   return (
     <div className="container mx-auto p-4">
+      <ToastContainer autoClose={1000} /> {/* Toast container */}
       <h1 className="text-2xl font-bold mb-6">Create Movie</h1>
       <div>
         {/* Movie Creation Form */}
@@ -293,13 +296,13 @@ export default function CreateMovie() {
                 </div>
                 <div className="text-right">
                   <button
-                    onClick={() => handleEdit(movie)}
+                    onClick={(e) => handleEdit(e, movie)}
                     className="bg-yellow-500 text-white px-4 py-2 mr-2 rounded"
                   >
                     Edit
                   </button>
                   <button
-                    onClick={() => handleDelete(movie.movieID)}
+                    onClick={(e) => handleDelete(e, movie.movieID)}
                     className="bg-red-500 text-white px-4 py-2 rounded"
                   >
                     Delete

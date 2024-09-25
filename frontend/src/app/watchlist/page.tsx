@@ -9,6 +9,8 @@ import {
 import { useRouter } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function WatchlistPage() {
   const dispatch = useDispatch<AppDispatch>();
@@ -27,9 +29,11 @@ export default function WatchlistPage() {
     }
   }, [dispatch, token]);
 
-  const handleRemoveMovie = (movieID: number) => {
+  const handleRemoveMovie = (e: any, movieID: number) => {
+    e.stopPropagation(); // Prevent navigation
     if (token) {
       dispatch(removeMovieFromWatchlist({ movieID, token }));
+      toast.success("Movie removed from watchlist!");
     }
   };
 
@@ -43,6 +47,7 @@ export default function WatchlistPage() {
 
   return (
     <div className="container mx-auto p-4">
+      <ToastContainer autoClose={1000} /> 
       <h1 className="text-3xl font-bold mb-6 text-gray-800">Your Watchlist</h1>
       {watchlist.length === 0 ? (
         <p className="text-lg text-gray-500">Your watchlist is empty.</p>
@@ -84,7 +89,7 @@ export default function WatchlistPage() {
                     <button
                       className={`inline-block bg-transparent text-[#171C20] cursor-pointer border border-gray-700 rounded-full text-xs font-light h-8 px-4 text-center uppercase align-middle 
                     hover:bg-red-300 hover:border-red-300 hover:text-gray-700 transition-all duration-300`}
-                      onClick={() => handleRemoveMovie(movie.movieID)}
+                      onClick={(e) => handleRemoveMovie(e,movie.movieID)}
                     >
                       Remove
                     </button>
