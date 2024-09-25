@@ -74,15 +74,16 @@ const MovieCard: React.FC<MovieCardProps> = ({
   return (
     <div
       key={movieID}
-      className="bg-white rounded-lg shadow-md p-4 h-full flex flex-col justify-between"
+      className="bg-white rounded-lg shadow-md pb-2 h-full flex flex-col justify-between"
     >
       <div onClick={goToDetails} className="cursor-pointer">
         <img
           src={imageUrl}
           alt={name}
-          className="w-full h-64 object-cover rounded-md mb-4"
+          className="w-full h-64 object-cover rounded-t-md mb-3"
         />
-        <h2 className="text-xl font-semibold">{name}</h2>
+        <h2 className="text-xl font-semibold pl-3">{name}</h2>
+        <div className="px-2">
         <div className="flex justify-between items-center text-sm p-1">
           <p className="flex items-center bg-gray-100 rounded-3xl p-1">
             <span className="inline text-yellow-500">★</span> {rating}
@@ -91,6 +92,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
             <p className="bg-gray-100 rounded-3xl p-1">{type}</p>
             <p className="bg-gray-100 rounded-3xl p-1">{certificate}</p>
           </div>
+        </div>
         </div>
       </div>
       <div className="flex justify-center w-full mt-auto">
@@ -103,7 +105,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
         border cursor-pointer
         ${
           isInWatchlist
-            ? "bg-red-300 border-red-500 text-white"
+            ? "bg-red-300 border-red-500 text-white hover:bg-red-400"
             : "bg-transparent text-[#171C20] border-gray-700 hover:bg-gray-100 hover:border-gray-200 hover:text-gray-700"
         }`}
         >
