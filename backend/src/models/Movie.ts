@@ -1,7 +1,7 @@
 import { Sequelize, DataTypes, Model } from "sequelize";
 
 // Define the attributes for the Movie model
-interface MovieAttributes {
+export interface MovieAttributes {
   movieID?: number;
   name: string;
   releaseYear: number | null;

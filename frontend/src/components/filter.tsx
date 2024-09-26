@@ -28,6 +28,16 @@ export const genre = [
   { label: "News", value: "News" },
 ];
 
+export const genres = [
+  { id: "1", name: "Action" },
+  { id: "2", name: "Adventure" },
+  { id: "3", name: "Thriller" },
+  { id: "4", name: "Crime" },
+  { id: "5", name: "Drama" },
+  { id: "6", name: "Sci-Fi" },
+  { id: "7", name: "Comedy" },
+];
+
 export const type = [
   { label: "Film", value: "Film" },
   { label: "Series", value: "Series" },
