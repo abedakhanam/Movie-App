@@ -96,7 +96,7 @@ export default function Home() {
         />
       </div>
       <h1 className="text-2xl font-bold mb-2">Movies List</h1>
-      {!initialLoadDone || loading ? (
+      {!initialLoadDone ? (
         <div className="flex justify-center items-center h-64">
           <LoaderSpinner />
         </div>
@@ -123,7 +123,9 @@ export default function Home() {
           No movies available
         </div>
       )}
-      {loading && movies.length > 0 && <LoaderSpinner />}
+      <div className="relative mt-8 flex justify-center">
+        {loading && movies.length > 0 && <LoaderSpinner />}
+      </div>
     </div>
   );
 }

@@ -165,86 +165,6 @@ export const createMovie = async (req: Request, res: Response) => {
   });
 };
 
-//works but takes a lot of params
-// export const createMovie = async (req: Request, res: Response) => {
-//   if (!req.user || !req.user.userID) {
-//     return res
-//       .status(401)
-//       .json({ message: "Unauthorized: User not authenticated" });
-//   }
-//   const userID = parseInt(req.user?.userID);
-
-//   upload(req, res, async (err) => {
-//     if (err instanceof multer.MulterError) {
-//       return res.status(400).json({ error: err.message });
-//     } else if (err) {
-//       return res.status(400).json({ error: "Unknown error occurred" });
-//     }
-//     if (!req.file) {
-//       return res.status(400).json({ message: "No file uploaded" });
-//     }
-
-//     try {
-//       // Check if there's a file and retrieve its path
-//       let imagePath;
-//       if (req.file) {
-//         const compressedFileName = `compressed-${req.file.filename}`;
-//         const compressedImagePath = path.join("uploads", compressedFileName);
-
-//         // Compress and save the image locally
-//         await sharp(req.file.path)
-//           .resize(600) // Resize the image to 600px width
-//           .jpeg({ quality: 60 }) // Compress the image
-//           .toFile(compressedImagePath); // Save the compressed image locally
-
-//         imagePath = `/${compressedFileName}`; // Store the path to the compressed image without 'uploads'
-//       }
-//       const newMovie = await Movie.create({
-//         name: req.body.name,
-//         releaseYear: parseInt(req.body.releaseYear), //validTE LATER
-//         rating: parseInt(req.body.rating),
-//         votes: parseInt(req.body.votes),
-//         duration: parseInt(req.body.duration),
-//         type: req.body.type,
-//         certificate: req.body.certificate,
-//         description: req.body.description,
-//         thumbnailUrl: imagePath,
-//       });
-
-//       // Find or create genres and associate them
-//       console.log(`req.body.genres    ${typeof(req.body.genres)}`);
-//       if (req.body.genres) {
-//         const genres = await Genre.findAll({
-//           where: { genreID: req.body.genres },
-//         });
-
-//         if (genres.length !== req.body.genres.length) {
-//           return res
-//             .status(400)
-//             .json({ error: "One or more genres are invalid" });
-//         }
-
-//         // Populate MovieGenre join table
-//         await MovieGenre.bulkCreate(
-//           genres.map((genre) => ({
-//             movieID: newMovie.movieID,
-//             genreID: genre.genreID,
-//           }))
-//         );
-//       }
-//       //populate usermovie table
-//       await UserMovie.create({
-//         movieID: newMovie.movieID,
-//         userID: userID,
-//       });
-
-//       return res.status(201).json(newMovie);
-//     } catch (error) {
-//       return res.status(400).json({ message: error });
-//     }
-//   });
-// };
-
 //get all user m
 export const getAllUserMovies = async (req: Request, res: Response) => {
   // Check if the user is authenticated
@@ -512,6 +432,19 @@ const addReview = async (req: Request, res: Response) => {
         review: review || existingReview.review, // Preserve the old review if no new one is provided
       });
 
+      // No need to increment the vote count since it's an update
+      const allReviews = await Review.findAll({ where: { movieID: movieID } });
+      const totalRating = allReviews.reduce(
+        (acc, curr) => acc + (curr.rating || 0),
+        0
+      );
+      const averageRating = totalRating / allReviews.length;
+
+      // Update the movie's average rating
+      await movie.update({
+        rating: averageRating,
+      });
+
       return res.status(200).json(updatedReview);
     } else {
       // If no review/rating exists, create a new one
@@ -520,6 +453,21 @@ const addReview = async (req: Request, res: Response) => {
         userID: userID,
         rating: rating || null,
         review: review || null,
+      });
+
+      // Ensure that the movie's votes and rating are not undefined
+      const currentVotes = movie.votes ?? 0;
+      const currentRating = movie.rating ?? 0;
+
+      // Increment the vote count and calculate the new average rating
+      const newVoteCount = currentVotes + 1;
+      const newTotalRating = currentRating * currentVotes + rating;
+      const newAverageRating = newTotalRating / newVoteCount;
+
+      // Update the movie with the new vote count and average rating
+      await movie.update({
+        votes: newVoteCount,
+        rating: newAverageRating,
       });
 
       return res.status(201).json(newReview);
@@ -540,26 +488,83 @@ const deleteReview = async (req: Request, res: Response) => {
   }
   const userID = parseInt(req.user.userID);
   try {
-    // Find the review
     const review = await Review.findOne({
       where: { reviewID, movieID, userID },
     });
-
-    // If the review does not exist or does not belong to the user, return 404
     if (!review) {
       return res
         .status(404)
         .json({ message: "Review not found or does not belong to this user" });
     }
-
     // Delete the review
     await review.destroy();
+
+    // Recalculate the movie's votes and average rating
+    const movie = await Movie.findByPk(movieID);
+    if (!movie) return res.status(404).json({ message: "Movie not found" });
+
+    const currentVotes = movie.votes ?? 0;
+
+    if (currentVotes > 1) {
+      // Get all remaining reviews for this movie
+      const allReviews = await Review.findAll({ where: { movieID } });
+      const totalRating = allReviews.reduce(
+        (acc, curr) => acc + (curr.rating || 0),
+        0
+      );
+      const newAverageRating = totalRating / allReviews.length;
+
+      // Update movie votes and rating
+      await movie.update({
+        votes: currentVotes - 1,
+        rating: newAverageRating,
+      });
+    } else {
+      // If no more reviews, reset rating and votes
+      await movie.update({
+        votes: 0,
+        rating: 0,
+      });
+    }
 
     return res.status(200).json({ message: "Review deleted successfully" });
   } catch (error) {
     return res.status(500).json({ message: "Failed to delete review" });
   }
 };
+
+//old one
+// const deleteReview = async (req: Request, res: Response) => {
+//   const { id } = req.params;
+//   const movieID = parseInt(id);
+//   const { reviewID } = req.body;
+//   if (!req.user || !req.user.userID) {
+//     return res
+//       .status(401)
+//       .json({ message: "Unauthorized: User not authenticated" });
+//   }
+//   const userID = parseInt(req.user.userID);
+//   try {
+//     // Find the review
+//     const review = await Review.findOne({
+//       where: { reviewID, movieID, userID },
+//     });
+
+//     // If the review does not exist or does not belong to the user, return 404
+//     if (!review) {
+//       return res
+//         .status(404)
+//         .json({ message: "Review not found or does not belong to this user" });
+//     }
+
+//     // Delete the review
+//     await review.destroy();
+
+//     return res.status(200).json({ message: "Review deleted successfully" });
+//   } catch (error) {
+//     return res.status(500).json({ message: "Failed to delete review" });
+//   }
+// };
 
 export {
   getAllMovies,
