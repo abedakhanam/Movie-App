@@ -66,7 +66,6 @@ export default function Home() {
 
   // Initial fetch of movies when the component mounts
   useEffect(() => {
-    dispatch(resetMovies());
     setInitialLoadDone(false);
     fetchMoviesCallback(1, limit);
   }, [dispatch, fetchMoviesCallback, limit, filters, searchQuery]);

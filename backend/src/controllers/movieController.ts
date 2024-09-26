@@ -134,7 +134,7 @@ export const createMovie = async (req: Request, res: Response) => {
       });
 
       // Find or create genres and associate them
-      console.log(`req.body.genres    ${req.body.genres}`);
+      console.log(`req.body.genres    ${typeof(req.body.genres)}`);
       if (req.body.genres) {
         const genres = await Genre.findAll({
           where: { genreID: req.body.genres },

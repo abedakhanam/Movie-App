@@ -70,7 +70,7 @@ const login = async (req: Request, res: Response) => {
     if (!isMatch)
       return res.status(401).json({ message: "invalid credentials" });
     const token = generateToken({ userID: user.userID.toString() }, "30d");
-    res.send({
+    res.send({ //fix structure same 
       userID: user.userID,
       firstName: user.firstName,
       lastName: user.lastName,
