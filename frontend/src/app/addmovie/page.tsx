@@ -1,5 +1,6 @@
 "use client";
 
+import { genreOptions } from "@/components/filter";
 import {
   createMovie,
   deleteMovie,
@@ -17,12 +18,17 @@ import "react-toastify/dist/ReactToastify.css";
 type MovieForm = {
   name: string;
   releaseYear: number;
-  rating: number;
-  votes: number;
   duration: number;
   description: string;
   type: "Film" | "Series";
-  certificate: "R" | "PG-13";
+  certificate:
+    | "R"
+    | "PG-13"
+    | "TV-MA"
+    | "TV-14"
+    | "PG"
+    | "Not Rated"
+    | "Approved";
   thumbnail: FileList;
   genres: string[];
 };
@@ -33,32 +39,31 @@ type Movie = {
   name: string;
   releaseYear: number;
   rating: number;
-  votes: number;
   duration: number;
   description: string;
   type: "Film" | "Series";
-  certificate: "R" | "PG-13";
+  certificate:
+    | "R"
+    | "PG-13"
+    | "TV-MA"
+    | "TV-14"
+    | "PG"
+    | "Not Rated"
+    | "Approved";
   thumbnailUrl: string;
 };
-
-const genreOptions = [
-  { id: "1", name: "Action" },
-  { id: "2", name: "Adventure" },
-  { id: "3", name: "Thriller" },
-  { id: "4", name: "Crime" },
-  { id: "5", name: "Drama" },
-  { id: "6", name: "Sci-Fi" },
-  { id: "7", name: "Comedy" },
-];
 
 export default function CreateMovie() {
   const router = useRouter();
   const token = useSelector((state: RootState) => state.user.token);
-  const { register, handleSubmit, reset, watch } = useForm<MovieForm>();
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<MovieForm>();
   const [movies, setMovies] = useState<Movie[]>([]);
   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [editingMovieID, setEditingMovieID] = useState<number | null>(null);
   const isFetching = useRef(false);
@@ -103,8 +108,6 @@ export default function CreateMovie() {
     const formData = new FormData();
     formData.append("name", data.name);
     formData.append("releaseYear", data.releaseYear.toString());
-    formData.append("rating", data.rating.toString());
-    formData.append("votes", data.votes.toString());
     formData.append("duration", data.duration.toString());
     formData.append("description", data.description);
     formData.append("type", data.type);
@@ -114,7 +117,6 @@ export default function CreateMovie() {
     selectedGenres.forEach((genre) => formData.append("genres", genre));
 
     try {
-      setError(null);
       if (editingMovieID) {
         // If editing, update movie
         await updateMovie(editingMovieID, formData, token);
@@ -122,7 +124,7 @@ export default function CreateMovie() {
       } else {
         // Create a new movie
         const newMovie = await createMovie(formData, token);
-        setMovies((prevMovies) => [...prevMovies, newMovie]);
+        setMovies((prevMovies) => [newMovie, ...prevMovies]);
         toast.success("Movie created successfully!");
       }
       reset();
@@ -177,36 +179,29 @@ export default function CreateMovie() {
           <div>
             <label className="block mb-2 text-gray-600">Movie Name</label>
             <input
-              {...register("name", { required: true })}
+              {...register("name", { required: "Movie Name is required" })}
               className="border p-2 w-full rounded-md"
               type="text"
             />
+            {errors.name && (
+              <p className="text-red-500 text-sm">{errors.name.message}</p>
+            )}
           </div>
           <div>
             <label className="block mb-2">Release Year</label>
             <input
-              {...register("releaseYear", { required: true })}
+              {...register("releaseYear", {
+                required: "Release Year is required",
+                valueAsNumber: true,
+              })}
               className="border p-2 w-full"
               type="number"
             />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-gray-600">Rating (1-10)</label>
-            <input
-              {...register("rating", { required: true, min: 1, max: 10 })}
-              className="border p-2 w-full"
-              type="number"
-            />
-          </div>
-
-          <div>
-            <label className="block mb-2 text-gray-600">Votes</label>
-            <input
-              {...register("votes")}
-              className="border p-2 w-full"
-              type="number"
-            />
+            {errors.releaseYear && (
+              <p className="text-red-500 text-sm">
+                {errors.releaseYear.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -214,29 +209,45 @@ export default function CreateMovie() {
               Duration (in minutes)
             </label>
             <input
-              {...register("duration")}
+              {...register("duration", {
+                required: "Duration is required",
+                valueAsNumber: true,
+              })}
               className="border p-2 w-full"
               type="number"
             />
+            {errors.duration && (
+              <p className="text-red-500 text-sm">{errors.duration.message}</p>
+            )}
           </div>
 
           <div>
             <label className="block mb-2 text-gray-600">Description</label>
             <textarea
-              {...register("description")}
+              {...register("description", {
+                required: "Description is required",
+              })}
               className="border p-2 w-full"
             />
+            {errors.description && (
+              <p className="text-red-500 text-sm">
+                {errors.description.message}
+              </p>
+            )}
           </div>
 
           <div>
             <label className="block mb-2 text-gray-600">Type</label>
             <select
-              {...register("type", { required: true })}
+              {...register("type", { required: "Type is required" })}
               className="border p-2 w-full"
             >
               <option value="Film">Film</option>
               <option value="Series">Series</option>
             </select>
+            {errors.type && (
+              <p className="text-red-500 text-sm">{errors.type.message}</p>
+            )}
           </div>
 
           {/* Genre Selection */}
@@ -266,27 +277,38 @@ export default function CreateMovie() {
           <div>
             <label className="block mb-2 text-gray-600">Certificate</label>
             <select
-              {...register("certificate", { required: true })}
+              {...register("certificate", {
+                required: "Certificate is required",
+              })}
               className="border p-2 w-full"
             >
               <option value="R">R</option>
               <option value="PG-13">PG-13</option>
+              <option value="TV-MA">TV-MA</option>
+              <option value="TV-14">TV-14</option>
+              <option value="PG">PG</option>
+              <option value="Not Rated">Not Rated</option>
+              <option value="Approved">Approved</option>
             </select>
+            {errors.certificate && (
+              <p className="text-red-500 text-sm">
+                {errors.certificate.message}
+              </p>
+            )}
           </div>
 
           <div>
             <label className="block mb-2 text-gray-600">Thumbnail</label>
             <input
-              {...register("thumbnail")}
+              {...register("thumbnail", { required: "Thumbnail is required" })}
               className="border p-2 w-full"
               type="file"
               accept="image/*"
             />
+            {errors.thumbnail && (
+              <p className="text-red-500 text-sm">{errors.thumbnail.message}</p>
+            )}
           </div>
-
-          {/* Error or Success Messages */}
-          {error && <p className="text-red-500 mb-4">{error}</p>}
-          {success && <p className="text-green-500 mb-4">{success}</p>}
 
           <button className="bg-blue-500 text-white p-2 rounded" type="submit">
             {editingMovieID ? "Update Movie" : "Create Movie"}
@@ -369,9 +391,10 @@ export default function CreateMovie() {
 //
 //
 //
-//before one genre
+// three genre
 // "use client";
 
+// import { genreOptions } from "@/components/filter";
 // import {
 //   createMovie,
 //   deleteMovie,
@@ -396,7 +419,7 @@ export default function CreateMovie() {
 //   type: "Film" | "Series";
 //   certificate: "R" | "PG-13";
 //   thumbnail: FileList;
-//   genre: string;
+//   genres: string[];
 // };
 
 // type Movie = {
@@ -416,8 +439,9 @@ export default function CreateMovie() {
 // export default function CreateMovie() {
 //   const router = useRouter();
 //   const token = useSelector((state: RootState) => state.user.token);
-//   const { register, handleSubmit, reset } = useForm<MovieForm>();
+//   const { register, handleSubmit, reset, watch } = useForm<MovieForm>();
 //   const [movies, setMovies] = useState<Movie[]>([]);
+//   const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
 //   const [error, setError] = useState<string | null>(null);
 //   const [success, setSuccess] = useState<string | null>(null);
 //   const [loading, setLoading] = useState<boolean>(true);
@@ -442,8 +466,25 @@ export default function CreateMovie() {
 //     fetchMovies();
 //   }, [token]);
 
+//   // Handle genre selection
+//   const handleGenreChange = (genreID: string) => {
+//     const updatedGenres = selectedGenres.includes(genreID)
+//       ? selectedGenres.filter((id) => id !== genreID) // Remove genre if already selected
+//       : [...selectedGenres, genreID]; // Add genre if not selected
+
+//     if (updatedGenres.length <= 3) {
+//       setSelectedGenres(updatedGenres); // Only allow up to 3 genres
+//     } else {
+//       toast.error("You can select up to 3 genres only.");
+//     }
+//   };
+
 //   // Submit movie form
 //   const onSubmit = async (data: MovieForm) => {
+//     if (selectedGenres.length < 1) {
+//       toast.error("Please select at least one genre.");
+//       return;
+//     }
 //     const formData = new FormData();
 //     formData.append("name", data.name);
 //     formData.append("releaseYear", data.releaseYear.toString());
@@ -454,7 +495,8 @@ export default function CreateMovie() {
 //     formData.append("type", data.type);
 //     formData.append("certificate", data.certificate);
 //     formData.append("thumbnail", data.thumbnail[0]);
-//     formData.append("genres", data.genre);
+//     // Append genres as an array instead of a string
+//     selectedGenres.forEach((genre) => formData.append("genres", genre));
 
 //     try {
 //       setError(null);
@@ -470,6 +512,7 @@ export default function CreateMovie() {
 //       }
 //       reset();
 //       setEditingMovieID(null);
+//       setSelectedGenres([]); // Reset selected genres after submission
 //     } catch (error) {
 //       toast.error("Error while creating/updating movie");
 //     }
@@ -581,20 +624,28 @@ export default function CreateMovie() {
 //             </select>
 //           </div>
 
+//           {/* Genre Selection */}
 //           <div>
-//             <label className="block mb-2 text-gray-600">Genre</label>
-//             <select
-//               {...register("genre", { required: true })}
-//               className="border p-2 w-full"
-//             >
-//               <option value="1">Action</option>
-//               <option value="2">Adventure</option>
-//               <option value="3">Thriller</option>
-//               <option value="4">Crime</option>
-//               <option value="5">Drama</option>
-//               <option value="6">Sci-Fi</option>
-//               <option value="7">Comedy</option>
-//             </select>
+//             <label className="block mb-2 text-gray-600">
+//               Genres (Select 1-3)
+//             </label>
+//             <div className="flex flex-wrap gap-2">
+//               {genreOptions.map((genre) => (
+//                 <label key={genre.id} className="flex items-center">
+//                   <input
+//                     type="checkbox"
+//                     value={genre.id}
+//                     checked={selectedGenres.includes(genre.id)}
+//                     onChange={() => handleGenreChange(genre.id)}
+//                     className="mr-2"
+//                   />
+//                   {genre.name}
+//                 </label>
+//               ))}
+//             </div>
+//             <p className="text-sm text-gray-500">
+//               Selected genres: {selectedGenres.length}/3
+//             </p>
 //           </div>
 
 //           <div>

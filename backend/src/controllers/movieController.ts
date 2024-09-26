@@ -124,8 +124,6 @@ export const createMovie = async (req: Request, res: Response) => {
       const newMovie = await Movie.create({
         name: req.body.name,
         releaseYear: parseInt(req.body.releaseYear), //validTE LATER
-        rating: parseInt(req.body.rating),
-        votes: parseInt(req.body.votes),
         duration: parseInt(req.body.duration),
         type: req.body.type,
         certificate: req.body.certificate,
@@ -134,7 +132,7 @@ export const createMovie = async (req: Request, res: Response) => {
       });
 
       // Find or create genres and associate them
-      console.log(`req.body.genres    ${typeof(req.body.genres)}`);
+      // console.log(`req.body.genres    ${typeof req.body.genres}`);
       if (req.body.genres) {
         const genres = await Genre.findAll({
           where: { genreID: req.body.genres },
@@ -166,6 +164,86 @@ export const createMovie = async (req: Request, res: Response) => {
     }
   });
 };
+
+//works but takes a lot of params
+// export const createMovie = async (req: Request, res: Response) => {
+//   if (!req.user || !req.user.userID) {
+//     return res
+//       .status(401)
+//       .json({ message: "Unauthorized: User not authenticated" });
+//   }
+//   const userID = parseInt(req.user?.userID);
+
+//   upload(req, res, async (err) => {
+//     if (err instanceof multer.MulterError) {
+//       return res.status(400).json({ error: err.message });
+//     } else if (err) {
+//       return res.status(400).json({ error: "Unknown error occurred" });
+//     }
+//     if (!req.file) {
+//       return res.status(400).json({ message: "No file uploaded" });
+//     }
+
+//     try {
+//       // Check if there's a file and retrieve its path
+//       let imagePath;
+//       if (req.file) {
+//         const compressedFileName = `compressed-${req.file.filename}`;
+//         const compressedImagePath = path.join("uploads", compressedFileName);
+
+//         // Compress and save the image locally
+//         await sharp(req.file.path)
+//           .resize(600) // Resize the image to 600px width
+//           .jpeg({ quality: 60 }) // Compress the image
+//           .toFile(compressedImagePath); // Save the compressed image locally
+
+//         imagePath = `/${compressedFileName}`; // Store the path to the compressed image without 'uploads'
+//       }
+//       const newMovie = await Movie.create({
+//         name: req.body.name,
+//         releaseYear: parseInt(req.body.releaseYear), //validTE LATER
+//         rating: parseInt(req.body.rating),
+//         votes: parseInt(req.body.votes),
+//         duration: parseInt(req.body.duration),
+//         type: req.body.type,
+//         certificate: req.body.certificate,
+//         description: req.body.description,
+//         thumbnailUrl: imagePath,
+//       });
+
+//       // Find or create genres and associate them
+//       console.log(`req.body.genres    ${typeof(req.body.genres)}`);
+//       if (req.body.genres) {
+//         const genres = await Genre.findAll({
+//           where: { genreID: req.body.genres },
+//         });
+
+//         if (genres.length !== req.body.genres.length) {
+//           return res
+//             .status(400)
+//             .json({ error: "One or more genres are invalid" });
+//         }
+
+//         // Populate MovieGenre join table
+//         await MovieGenre.bulkCreate(
+//           genres.map((genre) => ({
+//             movieID: newMovie.movieID,
+//             genreID: genre.genreID,
+//           }))
+//         );
+//       }
+//       //populate usermovie table
+//       await UserMovie.create({
+//         movieID: newMovie.movieID,
+//         userID: userID,
+//       });
+
+//       return res.status(201).json(newMovie);
+//     } catch (error) {
+//       return res.status(400).json({ message: error });
+//     }
+//   });
+// };
 
 //get all user m
 export const getAllUserMovies = async (req: Request, res: Response) => {
@@ -281,8 +359,6 @@ export const updateMovie = async (req: Request, res: Response) => {
       await movie.update({
         name: req.body.name || movie.name,
         releaseYear: parseInt(req.body.releaseYear) || movie.releaseYear,
-        rating: parseInt(req.body.rating) || movie.rating,
-        votes: parseInt(req.body.votes) || movie.votes,
         duration: parseInt(req.body.duration) || movie.duration,
         type: req.body.type || movie.type,
         certificate: req.body.certificate || movie.certificate,

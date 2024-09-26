@@ -28,7 +28,7 @@ export const genre = [
   { label: "News", value: "News" },
 ];
 
-export const genres = [
+export const genreOptions = [
   { id: "1", name: "Action" },
   { id: "2", name: "Adventure" },
   { id: "3", name: "Thriller" },
@@ -36,6 +36,26 @@ export const genres = [
   { id: "5", name: "Drama" },
   { id: "6", name: "Sci-Fi" },
   { id: "7", name: "Comedy" },
+  { id: "8", name: "Sport" },
+  { id: "9", name: "Animation" },
+  { id: "10", name: "Horror" },
+  { id: "11", name: "Mystery" },
+  { id: "12", name: "Romance" },
+  { id: "13", name: "History" },
+  { id: "14", name: "Fantasy" },
+  { id: "15", name: "Biography" },
+  { id: "16", name: "Musical" },
+  { id: "17", name: "Family" },
+  { id: "18", name: "Western" },
+  { id: "19", name: "Music" },
+  { id: "20", name: "War" },
+  { id: "21", name: "Short" },
+  { id: "22", name: "Reality-TV" },
+  { id: "23", name: "Documentary" },
+  { id: "24", name: "Film-Noir" },
+  { id: "25", name: "Game-Show" },
+  { id: "26", name: "Talk-Show" },
+  { id: "27", name: "News" },
 ];
 
 export const type = [
