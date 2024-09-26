@@ -95,13 +95,13 @@ export default function Home() {
           onFilterChange={handleFilterChange}
         />
       </div>
-      <h1 className="text-2xl font-bold mb-2">Movies List</h1>
+      <h1 className="text-2xl font-bold mb-2 text-white">Movies List</h1>
       {!initialLoadDone ? (
         <div className="flex justify-center items-center h-64">
           <LoaderSpinner />
         </div>
       ) : movies.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 p-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 p-4">
           {movies.map((movie) => (
             <div
               key={movie.movieID}

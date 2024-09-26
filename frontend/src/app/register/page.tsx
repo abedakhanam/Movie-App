@@ -64,17 +64,17 @@ export default function RegisterPage() {
   };
   return (
     <div className="max-w-md mx-auto mt-10">
-      <h1 className="text-3xl font-bold mb-6">Register</h1>
+      <h1 className="text-3xl font-bold mb-6 text-white">Register</h1>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       {success && <p className="text-green-500 mb-4">{success}</p>}
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+        className="bg-third shadow-md rounded px-8 pt-6 pb-8 mb-4"
       >
         <div className="mb-4">
           <label
             htmlFor="firstName"
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-white text-sm font-bold mb-2"
           >
             First Name
           </label>
@@ -84,7 +84,7 @@ export default function RegisterPage() {
             type="text"
             value={formData.firstName}
             onChange={handleChange}
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+            className={`shadow appearance-none border rounded w-full py-2 px-3 bg-third text-white leading-tight focus:outline-none focus:shadow-outline ${
               validationErrors.firstName ? "border-red-500" : ""
             }`}
           />
@@ -98,7 +98,7 @@ export default function RegisterPage() {
         <div className="mb-4">
           <label
             htmlFor="lastName"
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-white text-sm font-bold mb-2"
           >
             Last Name
           </label>
@@ -108,7 +108,7 @@ export default function RegisterPage() {
             type="text"
             value={formData.lastName}
             onChange={handleChange}
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+            className={`shadow appearance-none border rounded w-full py-2 px-3 bg-third text-white leading-tight focus:outline-none focus:shadow-outline ${
               validationErrors.lastName ? "border-red-500" : ""
             }`}
           />
@@ -122,7 +122,7 @@ export default function RegisterPage() {
         <div className="mb-4">
           <label
             htmlFor="email"
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-white text-sm font-bold mb-2"
           >
             Email
           </label>
@@ -132,7 +132,7 @@ export default function RegisterPage() {
             type="email"
             value={formData.email}
             onChange={handleChange}
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-white bg-third leading-tight focus:outline-none focus:shadow-outline ${
               validationErrors.email ? "border-red-500" : ""
             }`}
           />
@@ -146,7 +146,7 @@ export default function RegisterPage() {
         <div className="mb-6">
           <label
             htmlFor="password"
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-white text-sm font-bold mb-2"
           >
             Password
           </label>
@@ -156,7 +156,7 @@ export default function RegisterPage() {
             type="password"
             value={formData.password}
             onChange={handleChange}
-            className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline ${
+            className={`shadow appearance-none border rounded w-full py-2 px-3 text-white bg-third mb-3 leading-tight focus:outline-none focus:shadow-outline ${
               validationErrors.password ? "border-red-500" : ""
             }`}
           />

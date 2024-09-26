@@ -1,4 +1,8 @@
-import { fetchInitialMovies, resetMovies, setSearchQuery } from "@/store/movieSilce";
+import {
+  fetchInitialMovies,
+  resetMovies,
+  setSearchQuery,
+} from "@/store/movieSilce";
 import { AppDispatch, RootState } from "@/store/store";
 import { debounce } from "lodash";
 import Image from "next/image";
@@ -73,7 +77,7 @@ export default function Header() {
   };
 
   return (
-    <header className="flex justify-between items-center py-4 px-7 border-b bg-customRed">
+    <header className="flex justify-between items-center py-4 px-7 mb-3 border-borderColor bg-customRed">
       <div className="cursor-pointer" onClick={goToHome}>
         <Image
           src="https://res.cloudinary.com/di835w1z1/image/upload/v1726561472/logo_gdap68.png"
@@ -102,14 +106,14 @@ export default function Header() {
         <ul className="flex gap-x-5 text-white text-[14px]">
           {isMounted && isAuthenticated ? (
             <>
-              <li key="profile">
+              {/* <li key="profile">
                 <Link
                   href="profile"
                   className="hover:bg-white hover:text-black p-2"
                 >
                   {firstName}'s profile
                 </Link>
-              </li>
+              </li> */}
               <li key="addmovie">
                 <Link
                   href="/addmovie"

@@ -132,7 +132,7 @@ const MovieDetails = () => {
     );
 
   return (
-    <div className="max-w-3xl mx-auto p-6 bg-white shadow-md rounded-lg">
+    <div className="max-w-3xl mx-auto p-6 bg-third shadow-md rounded-lg">
       {/* Toast container */}
       <ToastContainer autoClose={1000} />
       <div className="flex items-center space-x-4 mb-4">
@@ -146,57 +146,58 @@ const MovieDetails = () => {
           className="w-48 h-auto rounded-lg"
         />
         <div>
-          <h1 className="text-4xl font-bold mb-2">
+          <h1 className="text-4xl font-bold mb-2 text-white">
             {movie.name}{" "}
             <span className="text-xl font-normal">({movie.releaseYear})</span>
           </h1>
-          <p className="text-sm">{movie.description}</p>
+          <p className="text-sm text-white">{movie.description}</p>
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-6">
-        <div className="bg-gray-200 px-4 py-2 rounded-lg">
-          <strong>Rating:</strong> {movie.rating}
+      <div className="flex flex-wrap gap-4 mb-2">
+        <div className="bg-gray-300 px-4 py-2 rounded-lg">
+          <strong>Rating:</strong>{" "}
+          {rating ? rating : movie.rating}
         </div>
-        <div className="bg-gray-200 px-4 py-2 rounded-lg">
-          <strong>Votes:</strong> {movie.votes}
+        <div className="bg-gray-300 px-4 py-2 rounded-lg">
+          <strong>Votes:</strong> {rating ? movie.votes + 1 : movie.votes}
         </div>
-        <div className="bg-gray-200 px-4 py-2 rounded-lg">
+        <div className="bg-gray-300 px-4 py-2 rounded-lg">
           <strong>Duration:</strong> {movie.duration} minutes
         </div>
-        <div className="bg-gray-200 px-4 py-2 rounded-lg">
+        <div className="bg-gray-300 px-4 py-2 rounded-lg">
           <strong>Type:</strong> {movie.type}
         </div>
-        <div className="bg-gray-200 px-4 py-2 rounded-lg">
+        <div className="bg-gray-300 px-4 py-2 rounded-lg">
           <strong>Certificate:</strong> {movie.certificate}
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-4 mb-6">
-        <div className="bg-gray-200 px-4 py-2 rounded-lg">
+      <div className="flex flex-wrap gap-4 mb-2">
+        <div className="bg-gray-300 px-4 py-2 rounded-lg">
           <strong>Nudity:</strong> {movie.nudity}
         </div>
-        <div className="bg-gray-200 px-4 py-2 rounded-lg">
+        <div className="bg-gray-300 px-4 py-2 rounded-lg">
           <strong>Violence:</strong> {movie.violence}
         </div>
-        <div className="bg-gray-200 px-4 py-2 rounded-lg">
+        <div className="bg-gray-300 px-4 py-2 rounded-lg">
           <strong>Profanity:</strong> {movie.profanity}
         </div>
-        <div className="bg-gray-200 px-4 py-2 rounded-lg">
+        <div className="bg-gray-300 px-4 py-2 rounded-lg">
           <strong>Alcohol:</strong> {movie.alcohol}
         </div>
-        <div className="bg-gray-200 px-4 py-2 rounded-lg">
+        <div className="bg-gray-300 px-4 py-2 rounded-lg">
           <strong>Frightening:</strong> {movie.frightening}
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold mb-4">Reviews</h2>
+      <h2 className="text-2xl font-bold mb-4 text-white">Reviews</h2>
 
       {movie.Reviews.length > 0 ? (
         movie.Reviews.map((review) => (
           <div
             key={review.reviewID}
-            className="bg-gray-100 p-4 rounded-lg mb-4"
+            className="bg-gray-300 p-4 rounded-lg mb-4"
           >
             <p className="font-bold">User {review.userID}:</p>
             <p>{review.review}</p>
@@ -220,10 +221,10 @@ const MovieDetails = () => {
           </div>
         ))
       ) : (
-        <p>No reviews available for this movie.</p>
+        <p className="text-white">No reviews available for this movie.</p>
       )}
       {/* Conditionally show Review Form or Edit Button */}
-      <div className="w-full max-w-lg p-4 bg-white rounded-lg shadow-md">
+      <div className="w-full max-w-lg p-4 bg-gray-300 rounded-lg shadow-md">
         <h2 className="text-lg font-semibold mb-4">
           {hasReviewed ? "Edit Your Review" : "Leave a Review"}
         </h2>
@@ -250,7 +251,7 @@ const MovieDetails = () => {
                     className={`text-2xl ${
                       rating && star <= rating
                         ? "text-yellow-500"
-                        : "text-gray-300"
+                        : "text-gray-600"
                     }`}
                   >
                     ★

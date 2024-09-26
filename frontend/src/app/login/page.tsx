@@ -62,16 +62,16 @@ export default function LoginPage() {
   };
   return (
     <div className="max-w-md mx-auto mt-10">
-      <h1 className="text-3xl font-bold mb-6">Login</h1>
+      <h1 className="text-3xl font-bold mb-6 text-white">Login</h1>
       {error && <p className="text-red-500 mb-4">{error}</p>}
       <form
         onSubmit={handleSubmit}
-        className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
+        className="bg-third shadow-md rounded px-8 pt-6 pb-8 mb-4"
       >
         <div className="mb-4">
           <label
             htmlFor="email"
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-white text-sm font-bold mb-2"
           >
             Email
           </label>
@@ -81,13 +81,13 @@ export default function LoginPage() {
             type="text"
             value={formData.email}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none bg-third text-white border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
         <div className="mb-6">
           <label
             htmlFor="password"
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-white text-sm font-bold mb-2"
           >
             Password
           </label>
@@ -97,7 +97,7 @@ export default function LoginPage() {
             type="password"
             value={formData.password}
             onChange={handleChange}
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border rounded w-full py-2 px-3 bg-third text-white mb-3 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
         <div className="flex items-center justify-between">

@@ -11,14 +11,15 @@ const config: Config = {
       colors: {
         customRed: "rgb(250,50,10)", // Example of RGB
         customDarkRed: "rgb(150,30,6)",
-        primary: '#1a202c', // Dark background color
-        secondary: '#2d3748', // Slightly lighter for sections
-        accent: '#4FD1C5', // Button color or accents
-        buttonHover: '#38B2AC', // Hover state for buttons
-        borderColor: '#718096', // Neutral border color
-        textPrimary: '#EDF2F7', // Light text color
-        textSecondary: '#A0AEC0', // Subtle text color
-        warning: '#E53E3E', // Error or warning text
+        primary: "#1a2634", // Dark background color
+        secondary: "#24323f", // Slightly lighter for sections
+        third: "#384d61",
+        accent: "#4FD1C5", // Button color or accents
+        buttonHover: "#38B2AC", // Hover state for buttons
+        borderColor: "#718096", // Neutral border color
+        textPrimary: "#EDF2F7", // Light text color
+        textSecondary: "#A0AEC0", // Subtle text color
+        warning: "#E53E3E", // Error or warning text
       },
     },
   },

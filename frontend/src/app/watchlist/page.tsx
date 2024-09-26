@@ -47,8 +47,8 @@ export default function WatchlistPage() {
 
   return (
     <div className="container mx-auto p-4">
-      <ToastContainer autoClose={1000} /> 
-      <h1 className="text-3xl font-bold mb-6 text-gray-800">Your Watchlist</h1>
+      <ToastContainer autoClose={1000} />
+      <h1 className="text-3xl font-bold mb-6 text-white">Your Watchlist</h1>
       {watchlist.length === 0 ? (
         <p className="text-lg text-gray-500">Your watchlist is empty.</p>
       ) : (
@@ -57,7 +57,7 @@ export default function WatchlistPage() {
             <li
               key={movie.movieID}
               onClick={() => goToDetails(movie.movieID)}
-              className="flex items-center justify-between bg-white shadow-lg hover:shadow-xl rounded-lg p-5 transition-shadow duration-300 ease-in-out"
+              className="flex items-center justify-between bg-gray-300 shadow-lg hover:shadow-xl rounded-lg p-5 transition-shadow duration-300 ease-in-out"
             >
               {movie.Movie ? (
                 <>
@@ -89,7 +89,7 @@ export default function WatchlistPage() {
                     <button
                       className={`inline-block bg-transparent text-[#171C20] cursor-pointer border border-gray-700 rounded-full text-xs font-light h-8 px-4 text-center uppercase align-middle 
                     hover:bg-red-300 hover:border-red-300 hover:text-gray-700 transition-all duration-300`}
-                      onClick={(e) => handleRemoveMovie(e,movie.movieID)}
+                      onClick={(e) => handleRemoveMovie(e, movie.movieID)}
                     >
                       Remove
                     </button>

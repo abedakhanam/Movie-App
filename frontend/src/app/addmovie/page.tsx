@@ -168,19 +168,19 @@ export default function CreateMovie() {
   return (
     <div className="container mx-auto p-4">
       <ToastContainer autoClose={1000} /> {/* Toast container */}
-      <h1 className="text-2xl font-bold mb-6">Create Movie</h1>
+      <h1 className="text-2xl font-bold mb-6 text-white">Create Movie</h1>
       <div>
         {/* Movie Creation Form */}
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="space-y-4 bg-white p-6 shadow-lg rounded-lg"
+          className="space-y-4 bg-third p-6 shadow-lg rounded-lg"
         >
           {/* Form fields */}
           <div>
-            <label className="block mb-2 text-gray-600">Movie Name</label>
+            <label className="block mb-2 text-white">Movie Name</label>
             <input
               {...register("name", { required: "Movie Name is required" })}
-              className="border p-2 w-full rounded-md"
+              className="border p-2 w-full rounded-md bg-gray-400"
               type="text"
             />
             {errors.name && (
@@ -188,13 +188,13 @@ export default function CreateMovie() {
             )}
           </div>
           <div>
-            <label className="block mb-2">Release Year</label>
+            <label className="block mb-2 text-white">Release Year</label>
             <input
               {...register("releaseYear", {
                 required: "Release Year is required",
                 valueAsNumber: true,
               })}
-              className="border p-2 w-full"
+              className="border p-2 w-full bg-gray-400"
               type="number"
             />
             {errors.releaseYear && (
@@ -205,7 +205,7 @@ export default function CreateMovie() {
           </div>
 
           <div>
-            <label className="block mb-2 text-gray-600">
+            <label className="block mb-2 text-white">
               Duration (in minutes)
             </label>
             <input
@@ -213,7 +213,7 @@ export default function CreateMovie() {
                 required: "Duration is required",
                 valueAsNumber: true,
               })}
-              className="border p-2 w-full"
+              className="border p-2 w-full bg-gray-400"
               type="number"
             />
             {errors.duration && (
@@ -222,12 +222,12 @@ export default function CreateMovie() {
           </div>
 
           <div>
-            <label className="block mb-2 text-gray-600">Description</label>
+            <label className="block mb-2 text-white">Description</label>
             <textarea
               {...register("description", {
                 required: "Description is required",
               })}
-              className="border p-2 w-full"
+              className="border p-2 w-full bg-gray-400"
             />
             {errors.description && (
               <p className="text-red-500 text-sm">
@@ -237,10 +237,10 @@ export default function CreateMovie() {
           </div>
 
           <div>
-            <label className="block mb-2 text-gray-600">Type</label>
+            <label className="block mb-2 text-white">Type</label>
             <select
               {...register("type", { required: "Type is required" })}
-              className="border p-2 w-full"
+              className="border p-2 w-full bg-gray-400"
             >
               <option value="Film">Film</option>
               <option value="Series">Series</option>
@@ -252,12 +252,12 @@ export default function CreateMovie() {
 
           {/* Genre Selection */}
           <div>
-            <label className="block mb-2 text-gray-600">
+            <label className="block mb-2 text-white">
               Genres (Select 1-3)
             </label>
             <div className="flex flex-wrap gap-2">
               {genreOptions.map((genre) => (
-                <label key={genre.id} className="flex items-center">
+                <label key={genre.id} className="flex items-center text-white">
                   <input
                     type="checkbox"
                     value={genre.id}
@@ -269,18 +269,18 @@ export default function CreateMovie() {
                 </label>
               ))}
             </div>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-white">
               Selected genres: {selectedGenres.length}/3
             </p>
           </div>
 
           <div>
-            <label className="block mb-2 text-gray-600">Certificate</label>
+            <label className="block mb-2 text-white">Certificate</label>
             <select
               {...register("certificate", {
                 required: "Certificate is required",
               })}
-              className="border p-2 w-full"
+              className="border p-2 w-full bg-gray-400"
             >
               <option value="R">R</option>
               <option value="PG-13">PG-13</option>
@@ -298,10 +298,10 @@ export default function CreateMovie() {
           </div>
 
           <div>
-            <label className="block mb-2 text-gray-600">Thumbnail</label>
+            <label className="block mb-2 text-white">Thumbnail</label>
             <input
               {...register("thumbnail", { required: "Thumbnail is required" })}
-              className="border p-2 w-full"
+              className="border p-2 w-full text-white"
               type="file"
               accept="image/*"
             />
@@ -316,14 +316,14 @@ export default function CreateMovie() {
         </form>
       </div>
       <div className="mt-10">
-        <h2 className="text-xl font-bold mb-4 text-gray-800">Your Movies</h2>
+        <h2 className="text-xl font-bold mb-4 text-white">Your Movies</h2>
         {movies.length > 0 ? (
           <div className="space-y-6">
             {movies.map((movie) => (
               <div
                 key={movie.movieID}
                 onClick={() => goToDetails(movie.movieID)}
-                className="flex items-center justify-between bg-white shadow-lg hover:shadow-xl rounded-lg p-5 transition-shadow duration-300 ease-in-out"
+                className="flex items-center justify-between bg-gray-500 shadow-lg hover:shadow-xl rounded-lg p-5 transition-shadow duration-300 ease-in-out"
               >
                 <div className="flex items-center">
                   {movie.thumbnailUrl ? (
@@ -342,13 +342,13 @@ export default function CreateMovie() {
                     </div>
                   )}
                   <div>
-                    <h3 className="text-xl font-semibold text-gray-800">
+                    <h3 className="text-xl text-white font-semibold">
                       {movie.name}
                     </h3>
-                    <p className="text-gray-600">
+                    <p className="text-white">
                       Release Year: {movie.releaseYear}
                     </p>
-                    <p className="text-sm text-gray-500">
+                    <p className="text-sm text-white">
                       <span className="inline text-yellow-500">★</span>
                       {movie.rating}/10
                     </p>

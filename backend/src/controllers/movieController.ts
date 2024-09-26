@@ -455,11 +455,10 @@ const addReview = async (req: Request, res: Response) => {
         review: review || null,
       });
 
-      // Ensure that the movie's votes and rating are not undefined
       const currentVotes = movie.votes ?? 0;
       const currentRating = movie.rating ?? 0;
 
-      // Increment the vote count and calculate the new average rating
+      // Increment the vote count
       const newVoteCount = currentVotes + 1;
       const newTotalRating = currentRating * currentVotes + rating;
       const newAverageRating = newTotalRating / newVoteCount;
