@@ -83,7 +83,12 @@ export default function CreateMovie() {
         isFetching.current = false;
       }
     }
-    fetchMovies();
+    if (!token) {
+      router.push("/login");
+      return;
+    } else {
+      fetchMovies();
+    }
   }, [token]);
 
   // Handle genre selection
@@ -101,7 +106,7 @@ export default function CreateMovie() {
 
   // Submit movie form
   const onSubmit = async (data: MovieForm) => {
-    if (selectedGenres.length < 1) {
+    if (selectedGenres.length < 1 && !editingMovieID) {
       toast.error("Please select at least one genre.");
       return;
     }
@@ -252,9 +257,7 @@ export default function CreateMovie() {
 
           {/* Genre Selection */}
           <div>
-            <label className="block mb-2 text-white">
-              Genres (Select 1-3)
-            </label>
+            <label className="block mb-2 text-white">Genres (Select 1-3)</label>
             <div className="flex flex-wrap gap-2">
               {genreOptions.map((genre) => (
                 <label key={genre.id} className="flex items-center text-white">
@@ -299,12 +302,23 @@ export default function CreateMovie() {
 
           <div>
             <label className="block mb-2 text-white">Thumbnail</label>
-            <input
-              {...register("thumbnail", { required: "Thumbnail is required" })}
-              className="border p-2 w-full text-white"
-              type="file"
-              accept="image/*"
-            />
+            {editingMovieID ? (
+              <input
+                {...register("thumbnail")}
+                className="border p-2 w-full text-white"
+                type="file"
+                accept="image/*"
+              />
+            ) : (
+              <input
+                {...register("thumbnail", {
+                  required: "Thumbnail is required",
+                })}
+                className="border p-2 w-full text-white"
+                type="file"
+                accept="image/*"
+              />
+            )}
             {errors.thumbnail && (
               <p className="text-red-500 text-sm">{errors.thumbnail.message}</p>
             )}

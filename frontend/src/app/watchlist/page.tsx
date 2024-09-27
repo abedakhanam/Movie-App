@@ -26,6 +26,9 @@ export default function WatchlistPage() {
       if (isFetching.current) return;
       dispatch(fetchWatchlist(token));
       isFetching.current = true;
+    } else {
+      router.push("/login");
+      return;
     }
   }, [dispatch, token]);
 

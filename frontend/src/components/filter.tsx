@@ -89,14 +89,14 @@ export const certificate = [
 ];
 
 export const ratings = [
-  { label: "10 Stars", value: "10" },
-  { label: "9 Stars", value: "9" },
-  { label: "8 Stars", value: "8" },
-  { label: "7 Stars", value: "7" },
-  { label: "6 Stars", value: "6" },
-  { label: "5 Stars", value: "5" },
-  { label: "4 Stars", value: "4" },
-  { label: "3 Stars", value: "3" },
-  { label: "2 Stars", value: "2" },
-  { label: "1 Star", value: "1" },
+  // { label: "10 Stars", value: "10" },
+  // { label: "9 Stars", value: "9" },
+  // { label: "8 Stars", value: "8" },
+  // { label: "7 Stars", value: "7" },
+  // { label: "6 Stars", value: "6" },
+  // { label: "5 Stars", value: "5" },
+  // { label: "4 Stars", value: "4" },
+  { label: "Above or equal 8", value: "1" },
+  { label: "5 to 8", value: "2" },
+  { label: "Less than 5", value: "3" },
 ];

@@ -2,12 +2,14 @@
 import { AppDispatch } from "@/store/store";
 import { login } from "@/store/userSlice";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentUrl = searchParams.get("currentUrl");
   const dispatch = useDispatch<AppDispatch>();
   const [formData, setFormData] = useState({
     email: "",
@@ -54,7 +56,11 @@ export default function LoginPage() {
           })
         );
         // console.log("Login successful:", response.data);
-        router.push("/");
+        if (currentUrl) {
+          router.push(currentUrl);
+        } else {
+          router.push("/");
+        }
       }
     } catch (error) {
       setError("Login failed. Please check your email or password.");

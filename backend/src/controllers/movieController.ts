@@ -82,10 +82,32 @@ const getAllMovies = async (req: Request, res: Response) => {
     if (genre) {
       esQuery.bool.filter.push({ term: { genres: genre } });
     }
+    // if (rating) {
+    //   esQuery.bool.filter.push({
+    //     range: { rating: { gte: parseFloat(rating as string) } },
+    //   });
+    // }
     if (rating) {
-      esQuery.bool.filter.push({
-        range: { rating: { gte: parseFloat(rating as string) } },
-      });
+      switch (rating) {
+        case "1":
+          // Rating less than or equal to 5
+          esQuery.bool.filter.push({
+            range: { rating: { gte: 8 } },
+          });
+          break;
+        case "2":
+          // Rating greater than or equal to 8
+          // Rating between 5 and 8 (inclusive)
+          esQuery.bool.filter.push({
+            range: { rating: { gte: 5, lte: 8 } },
+          });
+          break;
+        case "3":
+          esQuery.bool.filter.push({
+            range: { rating: { lt: 5 } },
+          });
+          break;
+      }
     }
     if (type) {
       esQuery.bool.filter.push({ term: { type: type } });

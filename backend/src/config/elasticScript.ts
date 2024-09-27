@@ -15,8 +15,8 @@ const esClient = new ElasticsearchClient({
   },
 });
 
-const chunkSize = 100; // Adjust based on your system capacity
-const totalMovies = 5000; // Total number of fake movies
+const chunkSize = 1000; // Adjust based on your system capacity
+const totalMovies = 500000; // Total number of fake movies
 
 // Define the types for Elasticsearch indexing
 interface EsIndexMetadata {

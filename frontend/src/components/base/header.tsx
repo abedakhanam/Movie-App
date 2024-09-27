@@ -7,7 +7,7 @@ import { AppDispatch, RootState } from "@/store/store";
 import { debounce } from "lodash";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
@@ -31,6 +31,7 @@ const navUserLinks = [
 
 export default function Header() {
   const dispatch = useDispatch<AppDispatch>();
+  const pathname = usePathname();
   const searchQuery = useSelector(
     (state: RootState) => state.movies.searchQuery
   );
@@ -89,31 +90,33 @@ export default function Header() {
       </div>
 
       {/* Search Form */}
-      <div className="relative mx-5">
-        <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
-          <img src="/svg/search.svg" alt="Search" className="w-4 h-4" />
-        </span>
-        <input
-          type="text"
-          placeholder="Search"
-          value={searchInput}
-          onChange={handleSearchInput}
-          className="bg-customDarkRed text-white pl-10 pr-4 py-1 border rounded-xl w-[200px] sm:w-[300px] focus:outline-none"
-        />
-      </div>
+      {pathname == "/" && (
+        <div className="relative mx-5">
+          <span className="absolute left-3 top-1/2 transform -translate-y-1/2">
+            <img src="/svg/search.svg" alt="Search" className="w-4 h-4" />
+          </span>
+          <input
+            type="text"
+            placeholder="Search"
+            value={searchInput}
+            onChange={handleSearchInput}
+            className="bg-customDarkRed text-white pl-10 pr-4 py-1 border rounded-xl w-[200px] sm:w-[300px] focus:outline-none"
+          />
+        </div>
+      )}
 
       <nav>
         <ul className="flex gap-x-5 text-white text-[14px]">
           {isMounted && isAuthenticated ? (
             <>
-              {/* <li key="profile">
-                <Link
-                  href="profile"
-                  className="hover:bg-white hover:text-black p-2"
+              <li key="profile">
+                <span
+                  // href="profile"
+                  className="p-2"
                 >
-                  {firstName}'s profile
-                </Link>
-              </li> */}
+                  Hi, {firstName}
+                </span>
+              </li>
               <li key="addmovie">
                 <Link
                   href="/addmovie"
@@ -127,7 +130,7 @@ export default function Header() {
                   href="/watchlist"
                   className="hover:bg-white hover:text-black p-2"
                 >
-                  WatchList{" "}
+                  Favorites{" "}
                   {watchlistCount ? (
                     <p className="inline bg-yellow-300 p-1 rounded-full text-black">
                       {watchlistCount > 0 ? `${watchlistCount}` : null}
