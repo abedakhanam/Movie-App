@@ -140,6 +140,7 @@ export default function Home() {
 //
 //
 //
+//withoutelast
 // "use client";
 // import DiscoveryHeader from "@/components/base/DiscoveryHeader";
 // import { certificate, genre, ratings, type } from "@/components/filter";
@@ -163,12 +164,13 @@ export default function Home() {
 //   const [filters, setFilters] = useState({});
 //   const [initialLoadDone, setInitialLoadDone] = useState(false);
 //   const limit = 20; // Number of movies per request
+//   const [currentPage, setCurrentPage] = useState(1);
 
 //   const isFetching = useRef(false); //for repeat api call
 //   const isFetchingWatchlist = useRef(0);
 
 //   const fetchMoviesCallback = useCallback(
-//     async (currentPage: number, limit: number, appliedFilters = filters) => {
+//     async (page: number, limit: number, appliedFilters = filters) => {
 //       if (isFetching.current) return; //prevent dup calls
 //       isFetching.current = true;
 //       try {
@@ -177,9 +179,7 @@ export default function Home() {
 //           searchQuery.trim() !== ""
 //             ? { ...appliedFilters, search: searchQuery }
 //             : appliedFilters;
-//         await dispatch(
-//           fetchMovies({ page: currentPage, limit, filters: filterParams })
-//         );
+//         await dispatch(fetchMovies({ page, limit, filters: filterParams }));
 //         // console.log(`moviesData ${JSON.stringify(moviesData)}`);
 //         if (token) {
 //           if (isFetchingWatchlist.current !== 0) return; //prevent dup calls
@@ -192,7 +192,7 @@ export default function Home() {
 //         setInitialLoadDone(true);
 //       }
 //     },
-//     [dispatch, filters, searchQuery]
+//     [dispatch, filters, searchQuery, token]
 //   );
 
 //   const handleScroll = useCallback(() => {
@@ -202,21 +202,24 @@ export default function Home() {
 //       !loading &&
 //       hasMore
 //     ) {
-//       fetchMoviesCallback(page, limit);
+//       setCurrentPage((prevPage) => prevPage + 1);
+//       fetchMoviesCallback(currentPage + 1, limit);
 //     }
-//   }, [fetchMoviesCallback, loading, hasMore, page, limit]);
+//   }, [fetchMoviesCallback, loading, hasMore, currentPage, limit]);
 
 //   // Initial fetch of movies when the component mounts
 //   useEffect(() => {
 //     setInitialLoadDone(false);
+//     dispatch(resetMovies());
+//     setCurrentPage(1);
 //     fetchMoviesCallback(1, limit);
-//   }, [dispatch, fetchMoviesCallback, limit, filters, searchQuery]);
+//   }, [fetchMoviesCallback, limit]);
 
 //   // Scroll event listener
 //   useEffect(() => {
 //     window.addEventListener("scroll", handleScroll);
 //     return () => window.removeEventListener("scroll", handleScroll);
-//   }, [loading, hasMore, page]);
+//   }, [handleScroll]);
 
 //   const handleFilterChange = (newFilters: any) => {
 //     setFilters(newFilters);
