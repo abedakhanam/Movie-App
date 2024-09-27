@@ -44,7 +44,9 @@ const initialState: MovieState = {
 export const fetchMovies = createAsyncThunk(
   "movies/fetchMovies",
   async ({ page, limit, filters }: FetchMoviesParams) => {
+    console.log("Fetching movies:", { page, limit, filters });
     const movies = await getAllMovies(page, limit, filters);
+    console.log("Fetched movies:", movies.length);
     return { movies, hasMore: movies.length === limit };
   }
 );
@@ -79,6 +81,7 @@ const movieSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchMovies.fulfilled, (state, action) => {
+        console.log("fetchMovies fulfilled:", action.payload);
         state.movies = [...state.movies, ...action.payload.movies];
         state.hasMore = action.payload.hasMore;
         state.loading = false;
@@ -98,6 +101,7 @@ const movieSlice = createSlice({
         state.page = 1;
       })
       .addCase(fetchInitialMovies.rejected, (state, action) => {
+        console.log("fetchMovies rejected:", action.error);
         state.loading = false;
         state.error = action.error.message || "An error occurred";
       });

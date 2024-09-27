@@ -13,7 +13,131 @@ import path from "path";
 import sharp from "sharp";
 import multer from "multer";
 import { upload } from "../helpers/multer";
+import { Client as ElasticsearchClient } from "@elastic/elasticsearch";
 
+// Elasticsearch client setup
+const esClient = new ElasticsearchClient({
+  node: "https://localhost:9200/",
+  auth: {
+    username: "elastic",
+    password: "cmSUa+=J61MaYudG_TiL",
+  },
+  tls: {
+    rejectUnauthorized: false,
+  },
+});
+
+//
+//
+//
+///fixed
+//
+// const getAllMovies = async (req: Request, res: Response) => {
+//   try {
+//     const page = parseInt(req.query.page as string) || 1;
+//     const limit = parseInt(req.query.limit as string) || 20;
+//     const from = (page - 1) * limit;
+
+//     const { genre, rating, type, certificate, search } = req.query;
+
+//     // Build Elasticsearch query
+//     const esQuery: any = {
+//       bool: {
+//         must: [],
+//         filter: [],
+//       },
+//     };
+
+//     // Add search query if provided
+//     if (search) {
+//       esQuery.bool.must.push({
+//         multi_match: {
+//           query: search,
+//           fields: ["name^3", "description"],
+//           fuzziness: "auto",
+//         },
+//       });
+//     }
+
+//     // Add filters
+//     if (genre) {
+//       esQuery.bool.filter.push({ term: { 'genres': genre } });
+//     }
+//     if (rating) {
+//       esQuery.bool.filter.push({
+//         range: { rating: { gte: parseFloat(rating as string) } },
+//       });
+//     }
+//     if (type) {
+//       esQuery.bool.filter.push({ term: { type: type } });
+//     }
+//     if (certificate) {
+//       esQuery.bool.filter.push({ term: { certificate: certificate } });
+//     }
+
+//     // Execute Elasticsearch search
+//     const searchResponse = await esClient.search({
+//       index: "movies",
+//       body: {
+//         from,
+//         size: limit,
+//         query: esQuery,
+//         sort: [{ createdAt: "desc" }],
+//       },
+//       track_total_hits: true,
+//     });
+
+//     // Extract hits and total from the response
+//     const hits = searchResponse.hits.hits;
+//     const totalMovies = searchResponse.hits.total as { value: number };
+
+//     // Map Elasticsearch results to the desired format
+//     const movies = hits.map((hit: any) => ({
+//       movieID: hit._id,
+//       name: hit._source.name,
+//       thumbnailUrl: hit._source.thumbnailUrl,
+//       rating: hit._source.rating,
+//       type: hit._source.type,
+//       certificate: hit._source.certificate,
+//       createdAt: hit._source.createdAt,
+//       genres: hit._source.genres,
+//     }));
+
+//     const totalPages = Math.ceil(totalMovies.value / limit);
+
+//     res.status(200).json({
+//       message: "Movies fetched successfully",
+//       currentPage: page,
+//       totalPages,
+//       totalMovies: totalMovies.value,
+//       limit,
+//       offset: from,
+//       movies,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching movies:", error);
+//     return res
+//       .status(400)
+//       .json({
+//         message: "Failed to fetch movies",
+//         error: (error as Error).message,
+//       });
+//   }
+// };
+
+// export default getAllMovies;
+//
+///
+//
+//
+//
+//
+//
+//
+//
+//
+
+//oldgetallmovies
 // All movies with filtering
 const getAllMovies = async (req: Request, res: Response) => {
   //router.get("/api/movies", getAllMovies);
@@ -86,6 +210,7 @@ const getAllMovies = async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Failed to fetch movies", error });
   }
 };
+//oldgetallmovies end
 
 // Create a movie
 export const createMovie = async (req: Request, res: Response) => {
@@ -511,7 +636,7 @@ const deleteReview = async (req: Request, res: Response) => {
         (acc, curr) => acc + (curr.rating || 0),
         0
       );
-      const newAverageRating = totalRating / allReviews.length;
+      const newAverageRating = Math.round(totalRating / allReviews.length);
 
       // Update movie votes and rating
       await movie.update({
