@@ -139,7 +139,6 @@ const MovieDetails = () => {
         {!hasReviewed || isEditing ? (
           <div className="w-full max-w-lg p-4 bg-gray-300 rounded-lg shadow-md">
             <h2 className="text-lg font-semibold mb-4">Leave a Review</h2>
-            // Review Form
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <p className="mb-2">Rating (required): </p>

@@ -126,17 +126,20 @@ export default function CreateMovie() {
         // If editing, update movie
         await updateMovie(editingMovieID, formData, token);
         toast.success("Movie updated successfully!");
+        reset();
       } else {
         // Create a new movie
         const newMovie = await createMovie(formData, token);
         setMovies((prevMovies) => [newMovie, ...prevMovies]);
         toast.success("Movie created successfully!");
+        reset();
       }
-      reset();
+      // reset();
       setEditingMovieID(null);
       setSelectedGenres([]); // Reset selected genres after submission
-    } catch (error) {
-      toast.error("Error while creating/updating movie");
+    } catch (error: any) {
+      console.log(error);
+      toast.error("asdfsdf");
     }
   };
 

@@ -586,14 +586,14 @@ export const updateMovie = async (req: Request, res: Response) => {
         genres = await Genre.findAll({
           include: [
             {
-              model: MovieGenre,
+              model: Movie,
               where: { movieID },
-              attributes: [],
+              through: { attributes: [] },
             },
           ],
         });
       }
-
+      console.log("yoo bro = " + genres);
       // Update the movie in Elasticsearch
       const esDocument = {
         name: updatedMovie.name,
@@ -762,23 +762,15 @@ const deleteMovie = async (req: Request, res: Response) => {
     }
     // Delete
     await userMovie.destroy();
-    // Check if the movie exists in the Movie table
-    const movie = await Movie.findOne({
-      where: { movieID },
-    });
-    // Check if the movie exists in the user's watchlist
-    const watchlistEntry = await WatchList.findOne({
-      where: { movieID },
-    });
-    if (!watchlistEntry) {
-      return res.status(404).json({
-        message: "Movie not found in the watchlist",
-      });
-    }
     // Delete the movie from the user's watchlist
     await WatchList.destroy({
       where: { movieID },
     });
+    // Check if the movie exists in the Movie table
+    const movie = await Movie.findOne({
+      where: { movieID },
+    });
+
     if (movie) {
       await movie.destroy();
       // Delete from Elasticsearch index
