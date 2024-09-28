@@ -1,5 +1,6 @@
 "use client";
 import LoaderSpinner from "@/components/LoaderSpinner";
+import ConfirmModal from "@/components/modal";
 import { deleteReview, getMovieDetails, postReview } from "@/services/api";
 import { Movie, Review } from "@/services/type";
 import { RootState } from "@/store/store";
@@ -26,6 +27,16 @@ const MovieDetails = () => {
   const userID = useSelector((state: RootState) => state.user.userID);
   const username = useSelector((state: RootState) => state.user.username);
   const isFetching = useRef(false); //for repeat api call
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   useEffect(() => {
     if (movieID) {
@@ -105,8 +116,9 @@ const MovieDetails = () => {
     }
   };
 
-  const handleDeleteReview = async (reviewID: number, e: React.FormEvent) => {
-    e.preventDefault();
+  const handleDeleteReview = async (reviewID: number) => {
+    //, e: React.FormEvent
+    // e.preventDefault();
     try {
       await deleteReview(Number(movieID), reviewID, token);
       if (movie) {
@@ -115,6 +127,7 @@ const MovieDetails = () => {
           Reviews: movie.Reviews.filter((r) => r.reviewID !== reviewID),
         });
       }
+      setIsModalOpen(false);
       setHasReviewed(false);
       setReview("");
       setRating(null);
@@ -289,11 +302,19 @@ const MovieDetails = () => {
                     Edit Review
                   </button>
                   <button
-                    onClick={(e) => handleDeleteReview(review.reviewID, e)}
+                    onClick={handleOpenModal}
                     className="text-red-500 hover:text-red-700 text-sm"
                   >
                     Delete
                   </button>
+                  {/* Modal */}
+                  {isModalOpen && (
+                    <ConfirmModal
+                      isOpen={isModalOpen}
+                      onClose={handleCloseModal}
+                      onConfirm={() => handleDeleteReview(review.reviewID)}
+                    />
+                  )}
                 </div>
               )}
             </div>
