@@ -430,7 +430,7 @@ export const createMovie = async (req: Request, res: Response) => {
       }
       const newMovie = await Movie.create({
         name: req.body.name,
-        releaseYear: parseInt(req.body.releaseYear), //validTE LATER
+        releaseYear: parseInt(req.body.releaseYear),
         duration: parseInt(req.body.duration),
         type: req.body.type,
         certificate: req.body.certificate,
@@ -441,11 +441,11 @@ export const createMovie = async (req: Request, res: Response) => {
       // Find or create genres and associate them
       let genres: GenreAttributes[] = [];
       if (req.body.genres) {
-        const genres = await Genre.findAll({
+        const genresFromDb = await Genre.findAll({
           where: { genreID: req.body.genres },
         });
 
-        if (genres.length !== req.body.genres.length) {
+        if (genresFromDb.length !== req.body.genres.length) {
           return res
             .status(400)
             .json({ error: "One or more genres are invalid" });
@@ -453,13 +453,16 @@ export const createMovie = async (req: Request, res: Response) => {
 
         // Populate MovieGenre join table
         await MovieGenre.bulkCreate(
-          genres.map((genre) => ({
+          genresFromDb.map((genre) => ({
             movieID: newMovie.movieID,
             genreID: genre.genreID,
           }))
         );
+
+        genres = genresFromDb; // Set genres to use later for Elasticsearch
       }
-      //populate usermovie table
+
+      // Populate user-movie table
       await UserMovie.create({
         movieID: newMovie.movieID,
         userID: userID,
@@ -474,11 +477,11 @@ export const createMovie = async (req: Request, res: Response) => {
         certificate: newMovie.certificate,
         description: newMovie.description,
         thumbnailUrl: newMovie.thumbnailUrl,
-        genres: genres.map((genre) => genre.genreName),
+        genres: genres.map((genre) => genre.genreName), // Map to genre names
         createdAt: new Date().toISOString(),
       };
 
-      esClient.index({
+      await esClient.index({
         index: "movies",
         id: newMovie.movieID.toString(),
         body: esDocument,
@@ -491,6 +494,108 @@ export const createMovie = async (req: Request, res: Response) => {
   });
 };
 
+//
+//
+//
+//
+//
+//elastic
+// export const createMovie = async (req: Request, res: Response) => {
+//   if (!req.user || !req.user.userID) {
+//     return res
+//       .status(401)
+//       .json({ message: "Unauthorized: User not authenticated" });
+//   }
+//   const userID = parseInt(req.user?.userID);
+
+//   upload(req, res, async (err) => {
+//     if (err instanceof multer.MulterError) {
+//       return res.status(400).json({ error: err.message });
+//     } else if (err) {
+//       return res.status(400).json({ error: "Unknown error occurred" });
+//     }
+//     if (!req.file) {
+//       return res.status(400).json({ message: "No file uploaded" });
+//     }
+
+//     try {
+//       // Check if there's a file and retrieve its path
+//       let imagePath;
+//       if (req.file) {
+//         const compressedFileName = `compressed-${req.file.filename}`;
+//         const compressedImagePath = path.join("uploads", compressedFileName);
+
+//         // Compress and save the image locally
+//         await sharp(req.file.path)
+//           .resize(600) // Resize the image to 600px width
+//           .jpeg({ quality: 60 }) // Compress the image
+//           .toFile(compressedImagePath); // Save the compressed image locally
+
+//         imagePath = `/${compressedFileName}`; // Store the path to the compressed image without 'uploads'
+//       }
+//       const newMovie = await Movie.create({
+//         name: req.body.name,
+//         releaseYear: parseInt(req.body.releaseYear), //validTE LATER
+//         duration: parseInt(req.body.duration),
+//         type: req.body.type,
+//         certificate: req.body.certificate,
+//         description: req.body.description,
+//         thumbnailUrl: imagePath,
+//       });
+
+//       // Find or create genres and associate them
+//       let genres: GenreAttributes[] = [];
+//       if (req.body.genres) {
+//         const genres = await Genre.findAll({
+//           where: { genreID: req.body.genres },
+//         });
+
+//         if (genres.length !== req.body.genres.length) {
+//           return res
+//             .status(400)
+//             .json({ error: "One or more genres are invalid" });
+//         }
+
+//         // Populate MovieGenre join table
+//         await MovieGenre.bulkCreate(
+//           genres.map((genre) => ({
+//             movieID: newMovie.movieID,
+//             genreID: genre.genreID,
+//           }))
+//         );
+//       }
+//       //populate usermovie table
+//       await UserMovie.create({
+//         movieID: newMovie.movieID,
+//         userID: userID,
+//       });
+//       console.log(`genre ugh: ${genres}`);
+
+//       // Index the movie in Elasticsearch
+//       const esDocument = {
+//         name: newMovie.name,
+//         releaseYear: newMovie.releaseYear,
+//         duration: newMovie.duration,
+//         type: newMovie.type,
+//         certificate: newMovie.certificate,
+//         description: newMovie.description,
+//         thumbnailUrl: newMovie.thumbnailUrl,
+//         genres: genres.map((genre) => genre.genreName),
+//         createdAt: new Date().toISOString(),
+//       };
+
+//       esClient.index({
+//         index: "movies",
+//         id: newMovie.movieID.toString(),
+//         body: esDocument,
+//       });
+
+//       return res.status(201).json(newMovie);
+//     } catch (error) {
+//       return res.status(400).json({ message: error });
+//     }
+//   });
+// };
 //
 //
 //

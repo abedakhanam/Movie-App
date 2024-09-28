@@ -70,7 +70,7 @@ const DiscoveryHeader: React.FC<DiscoveryHeaderProps> = ({
   };
 
   return (
-    <div className="rounded-lg shadow-sm">
+    <div className="rounded-lg shadow-sm px-4">
       <div className="flex flex-col md:flex-row items-center justify-between">
         {/* Genre Filter */}
         <select
