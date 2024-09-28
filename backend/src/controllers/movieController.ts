@@ -82,11 +82,6 @@ const getAllMovies = async (req: Request, res: Response) => {
     if (genre) {
       esQuery.bool.filter.push({ term: { genres: genre } });
     }
-    // if (rating) {
-    //   esQuery.bool.filter.push({
-    //     range: { rating: { gte: parseFloat(rating as string) } },
-    //   });
-    // }
     if (rating) {
       switch (rating) {
         case "1":
@@ -132,12 +127,26 @@ const getAllMovies = async (req: Request, res: Response) => {
     const hits = searchResponse.hits.hits;
     const totalMovies = searchResponse.hits.total as { value: number };
 
+    // Get all movie IDs from the Elasticsearch results
+    const movieIDs = hits.map((hit: any) => hit._id);
+
+    // Fetch current ratings from the database
+    const moviesWithRatings = await Movie.findAll({
+      attributes: ["movieID", "rating"],
+      where: { movieID: { [Op.in]: movieIDs } },
+    });
+
+    // Create a map of movieID to rating
+    const ratingMap = new Map(
+      moviesWithRatings.map((movie: any) => [movie.movieID, movie.rating])
+    );
+
     // Map Elasticsearch results to the desired format
     const movies = hits.map((hit: any) => ({
       movieID: hit._id,
       name: hit._source.name,
       thumbnailUrl: hit._source.thumbnailUrl,
-      rating: hit._source.rating,
+      rating: ratingMap.get(parseInt(hit._id ?? "")) ?? null,
       type: hit._source.type,
       certificate: hit._source.certificate,
       createdAt: hit._source.createdAt,
@@ -169,7 +178,142 @@ export default getAllMovies;
 //
 //
 //
-//
+//// elastic works fine without the rating
+// const getAllMovies = async (req: Request, res: Response) => {
+//   try {
+//     const page = parseInt(req.query.page as string) || 1;
+//     const limit = parseInt(req.query.limit as string) || 20;
+//     const from = (page - 1) * limit;
+
+//     const { genre, rating, type, certificate, search } = req.query;
+
+//     // Build Elasticsearch query
+//     const esQuery: any = {
+//       bool: {
+//         must: [],
+//         filter: [],
+//       },
+//     };
+
+//     // Add search query if provided
+//     if (search) {
+//       esQuery.bool.must.push({
+//         bool: {
+//           should: [
+//             {
+//               prefix: {
+//                 name: {
+//                   value: search,
+//                   boost: 3,
+//                 },
+//               },
+//             },
+//             {
+//               match_phrase_prefix: {
+//                 name: {
+//                   query: search,
+//                   boost: 2,
+//                 },
+//               },
+//             },
+//             {
+//               match_phrase_prefix: {
+//                 description: search,
+//               },
+//             },
+//           ],
+//           minimum_should_match: 1,
+//         },
+//       });
+//     }
+//     // Add filters
+//     if (genre) {
+//       esQuery.bool.filter.push({ term: { genres: genre } });
+//     }
+//     // if (rating) {
+//     //   esQuery.bool.filter.push({
+//     //     range: { rating: { gte: parseFloat(rating as string) } },
+//     //   });
+//     // }
+//     if (rating) {
+//       switch (rating) {
+//         case "1":
+//           // Rating less than or equal to 5
+//           esQuery.bool.filter.push({
+//             range: { rating: { gte: 8 } },
+//           });
+//           break;
+//         case "2":
+//           // Rating greater than or equal to 8
+//           // Rating between 5 and 8 (inclusive)
+//           esQuery.bool.filter.push({
+//             range: { rating: { gte: 5, lte: 8 } },
+//           });
+//           break;
+//         case "3":
+//           esQuery.bool.filter.push({
+//             range: { rating: { lt: 5 } },
+//           });
+//           break;
+//       }
+//     }
+//     if (type) {
+//       esQuery.bool.filter.push({ term: { type: type } });
+//     }
+//     if (certificate) {
+//       esQuery.bool.filter.push({ term: { certificate: certificate } });
+//     }
+
+//     // Execute Elasticsearch search
+//     const searchResponse = await esClient.search({
+//       index: "movies",
+//       body: {
+//         from,
+//         size: limit,
+//         query: esQuery,
+//         sort: [{ createdAt: "desc" }],
+//       },
+//       track_total_hits: true,
+//     });
+
+//     // Extract hits and total from the response
+//     const hits = searchResponse.hits.hits;
+//     const totalMovies = searchResponse.hits.total as { value: number };
+
+//     // Map Elasticsearch results to the desired format
+//     const movies = hits.map((hit: any) => ({
+//       movieID: hit._id,
+//       name: hit._source.name,
+//       thumbnailUrl: hit._source.thumbnailUrl,
+//       rating: hit._source.rating,
+//       type: hit._source.type,
+//       certificate: hit._source.certificate,
+//       createdAt: hit._source.createdAt,
+//       genres: hit._source.genres,
+//     }));
+
+//     const totalPages = Math.ceil(totalMovies.value / limit);
+
+//     res.status(200).json({
+//       message: "Movies fetched successfully",
+//       currentPage: page,
+//       totalPages,
+//       totalMovies: totalMovies.value,
+//       limit,
+//       offset: from,
+//       movies,
+//     });
+//   } catch (error) {
+//     console.error("Error fetching movies:", error);
+//     return res.status(400).json({
+//       message: "Failed to fetch movies",
+//       error: (error as Error).message,
+//     });
+//   }
+// };
+
+// export default getAllMovies;
+////
 //
 //
 //

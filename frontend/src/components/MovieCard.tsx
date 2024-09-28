@@ -103,7 +103,7 @@ const MovieCard: React.FC<MovieCardProps> = ({
           <div className="flex justify-between items-center text-sm">
             {rating > 0 && (
               <p className="flex items-center bg-yellow-500 bg-opacity-75 text-white rounded-full px-2 py-1">
-                <span className="mr-1">★</span> {rating}
+                <span className="mr-1">★</span> {rating.toFixed(1)}
               </p>
             )}
             <div className="flex space-x-2 ml-auto">
