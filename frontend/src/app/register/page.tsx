@@ -1,5 +1,6 @@
 "use client";
 import axios from "axios";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
@@ -167,7 +168,7 @@ export default function RegisterPage() {
           )}
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-center justify-between">
           <button
             type="submit"
             className={`w-full max-w-[150px] h-8 text-xs font-light tracking-wide text-center uppercase align-middle rounded-full px-3 
@@ -175,6 +176,12 @@ export default function RegisterPage() {
           >
             Register
           </button>
+          <p className="text-white text-sm pt-4">
+            Have an existing account?{" "}
+            <Link href={"/login"} className="hover:text-blue-500 underline">
+              Login
+            </Link>
+          </p>
         </div>
       </form>
     </div>

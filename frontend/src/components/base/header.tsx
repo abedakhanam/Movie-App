@@ -100,7 +100,7 @@ export default function Header() {
             placeholder="Search"
             value={searchInput}
             onChange={handleSearchInput}
-            className="bg-customDarkRed text-white pl-10 pr-4 py-1 border rounded-xl w-[200px] sm:w-[300px] focus:outline-none"
+            className="bg-customDarkRed text-white pl-10 pr-4 py-1 border rounded-xl w-[200px] sm:w-[400px] focus:outline-none"
           />
         </div>
       )}

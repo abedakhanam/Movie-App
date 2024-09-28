@@ -25,7 +25,7 @@ export default function RootLayout({
     <Provider store={store}>
       <html lang="en">
         <body
-          className={`${inter.className} bg-primary text-zinc-900 min-h-screen`}
+          className={`${inter.className} bg-primary text-zinc-900 min-h-screen custom-scrollbar`}
         >
           <Container>
             <Header />

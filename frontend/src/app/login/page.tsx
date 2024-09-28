@@ -2,6 +2,7 @@
 import { AppDispatch } from "@/store/store";
 import { login } from "@/store/userSlice";
 import axios from "axios";
+import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { useDispatch } from "react-redux";
@@ -106,7 +107,7 @@ export default function LoginPage() {
             className="shadow appearance-none border rounded w-full py-2 px-3 bg-third text-white mb-3 leading-tight focus:outline-none focus:shadow-outline"
           />
         </div>
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col items-center justify-between">
           <button
             type="submit"
             className={`w-full max-w-[150px] h-8 text-xs font-light tracking-wide text-center uppercase align-middle rounded-full px-3 
@@ -114,6 +115,12 @@ export default function LoginPage() {
           >
             Login
           </button>
+          <p className="text-white text-sm pt-4">
+            New user?{" "}
+            <Link href={"/register"} className="hover:text-blue-500 underline">
+              Sign Up
+            </Link>
+          </p>
         </div>
       </form>
     </div>
