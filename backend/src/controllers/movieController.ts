@@ -4,6 +4,7 @@ import {
   Movie,
   MovieGenre,
   Review,
+  User,
   UserMovie,
   WatchList,
 } from "../config/database";
@@ -1097,6 +1098,17 @@ const getMoviebyPK = async (req: Request, res: Response) => {
         {
           model: Review,
           attributes: ["reviewID", "userID", "rating", "review", "createdAt"],
+          include: [
+            {
+              model: User,
+              attributes: ["username"],
+            },
+          ],
+        },
+        {
+          model: Genre,
+          through: { attributes: [] }, // This prevents the junction table attributes from being returned
+          attributes: ["genreName"],
         },
       ],
     });

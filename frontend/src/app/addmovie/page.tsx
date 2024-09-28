@@ -394,12 +394,12 @@ export default function CreateMovie() {
                       <h3 className="text-xl text-white font-semibold">
                         {movie.name}
                       </h3>
-                      <p className="text-white">
+                      <p className="text-white text-xs">
                         Release Year: {movie.releaseYear}
                       </p>
-                      <p className="text-sm text-white">
+                      <p className="text-xs text-white">
                         <span className="inline text-yellow-500">★</span>
-                        {movie.rating > 0 ? "${movie.rating}/10" : "N/A"}
+                        {movie.rating > 0 ? `${movie.rating}/10` : "N/A"}
                       </p>
                     </div>
                   </div>

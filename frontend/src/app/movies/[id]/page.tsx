@@ -24,6 +24,7 @@ const MovieDetails = () => {
 
   const token = useSelector((state: RootState) => state.user.token);
   const userID = useSelector((state: RootState) => state.user.userID);
+  const username = useSelector((state: RootState) => state.user.username);
   const isFetching = useRef(false); //for repeat api call
 
   useEffect(() => {
@@ -33,10 +34,8 @@ const MovieDetails = () => {
         isFetching.current = true;
         try {
           const movieData = await getMovieDetails(Number(movieID));
-          // console.log(
-          //   `getmoviedetails ${JSON.stringify(movieData.movie.description)}`
-          // );
           setMovie(movieData.movie);
+          console.log(username);
           // Check if the user has already reviewed
           const existingReview = movieData.movie.Reviews.find(
             (r: Review) => r.userID === userID
@@ -138,7 +137,7 @@ const MovieDetails = () => {
       <div>
         {!hasReviewed || isEditing ? (
           <div className="w-full max-w-lg p-4 bg-gray-300 rounded-lg shadow-md">
-            <h2 className="text-lg font-semibold mb-4">Leave a Review</h2>
+            <h2 className="text-lg font-semibold mb-4">Leave a Rating</h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
                 <p className="mb-2">Rating (required): </p>
@@ -161,6 +160,7 @@ const MovieDetails = () => {
               </div>
 
               <div className="mb-4">
+                <p className="mb-2">Review (optional):</p>
                 <textarea
                   value={review}
                   onChange={(e) => setReview(e.target.value)}
@@ -182,7 +182,10 @@ const MovieDetails = () => {
                 {hasReviewed ? "Update Review" : "Submit Review"}
               </button>
               <button
-                onClick={() => setIsEditing(false)}
+                onClick={() => {
+                  setIsEditing(false);
+                  setRating(null);
+                }}
                 className={`w-full max-w-[150px] h-8 text-xs font-medium ${
                   rating
                     ? "bg-red-500 hover:bg-red-700"
@@ -214,12 +217,18 @@ const MovieDetails = () => {
           alt={movie.name}
           className="w-48 h-auto rounded-lg"
         />
-        <div>
-          <h1 className="text-4xl font-bold mb-2 text-white">
-            {movie.name}{" "}
-            <span className="text-xl font-normal">({movie.releaseYear})</span>
-          </h1>
-          <p className="text-sm text-white">{movie.description}</p>
+        <div className="flex flex-col">
+          <div className="pb-6 mb-6">
+            <h1 className="text-4xl font-bold mb-2 text-white">
+              {movie.name}{" "}
+              <span className="text-xl font-normal">({movie.releaseYear})</span>
+            </h1>
+            <p className="text-sm text-white">{movie.description}</p>
+          </div>
+          <div className="text-sm text-white">
+            <strong>Genres: </strong>
+            {movie.Genres.map((genre) => genre.genreName).join(", ")}
+          </div>
         </div>
       </div>
 
@@ -268,7 +277,9 @@ const MovieDetails = () => {
             className="bg-gray-300 p-4 rounded-lg mb-4"
           >
             <div className="flex justify-between">
-              <p className="font-bold">User {review.userID}:</p>
+              <p className="font-bold">
+                {review.User ? review.User.username : username}:
+              </p>
               {review.userID === userID && (
                 <div>
                   <button
@@ -323,7 +334,7 @@ export default MovieDetails;
 //
 //
 //
-//
+//without username & genre
 // "use client";
 // import LoaderSpinner from "@/components/LoaderSpinner";
 // import { deleteReview, getMovieDetails, postReview } from "@/services/api";
@@ -461,64 +472,70 @@ export default MovieDetails;
 
 //   const reviewDiv = () => {
 //     return (
-//       <div className="w-full max-w-lg p-4 bg-gray-300 rounded-lg shadow-md">
-//         <h2 className="text-lg font-semibold mb-4">
-//           {hasReviewed ? "Edit Your Review" : "Leave a Review"}
-//         </h2>
-
-//         {hasReviewed && !isEditing ? (
-//           // Edit button if the user already reviewed
-//           <button
-//             onClick={() => setIsEditing(true)}
-//             className="text-blue-500 hover:text-blue-700 text-sm"
-//           >
-//             Edit Review
-//           </button>
-//         ) : (
-//           // Review Form
-//           <form onSubmit={handleSubmit}>
-//             <div className="mb-4">
-//               <p className="mb-2">Rating (required): </p>
-//               <div className="flex space-x-2">
-//                 {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
-//                   <button
-//                     key={star}
-//                     type="button"
-//                     onClick={() => setRating(star)}
-//                     className={`text-2xl ${
-//                       rating && star <= rating
-//                         ? "text-yellow-500"
-//                         : "text-gray-600"
-//                     }`}
-//                   >
-//                     ★
-//                   </button>
-//                 ))}
+//       <div>
+//         {!hasReviewed || isEditing ? (
+//           <div className="w-full max-w-lg p-4 bg-gray-300 rounded-lg shadow-md">
+//             <h2 className="text-lg font-semibold mb-4">Leave a Rating</h2>
+//             <form onSubmit={handleSubmit}>
+//               <div className="mb-4">
+//                 <p className="mb-2">Rating (required): </p>
+//                 <div className="flex space-x-2">
+//                   {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((star) => (
+//                     <button
+//                       key={star}
+//                       type="button"
+//                       onClick={() => setRating(star)}
+//                       className={`text-2xl ${
+//                         rating && star <= rating
+//                           ? "text-yellow-500"
+//                           : "text-gray-600"
+//                       }`}
+//                     >
+//                       ★
+//                     </button>
+//                   ))}
+//                 </div>
 //               </div>
-//             </div>
 
-//             <div className="mb-4">
-//               <textarea
-//                 value={review}
-//                 onChange={(e) => setReview(e.target.value)}
-//                 placeholder="Write your review..."
-//                 className="w-full p-2 border border-gray-300 rounded-lg"
-//                 rows={4}
-//               />
-//             </div>
+//               <div className="mb-4">
+//                 <p className="mb-2">Review (optional):</p>
+//                 <textarea
+//                   value={review}
+//                   onChange={(e) => setReview(e.target.value)}
+//                   placeholder="Write your review..."
+//                   className="w-full p-2 border border-gray-300 rounded-lg"
+//                   rows={4}
+//                 />
+//               </div>
 
-//             <button
-//               type="submit"
-//               className={`w-full max-w-[150px] h-8 text-xs font-medium ${
-//                 rating
-//                   ? "bg-blue-500 hover:bg-blue-700"
-//                   : "bg-gray-300 cursor-not-allowed"
-//               } text-white rounded-lg`}
-//               disabled={!rating}
-//             >
-//               {hasReviewed ? "Update Review" : "Submit Review"}
-//             </button>
-//           </form>
+//               <button
+//                 type="submit"
+//                 className={`w-full max-w-[150px] h-8 text-xs font-medium mr-3 ${
+//                   rating
+//                     ? "bg-blue-500 hover:bg-blue-700"
+//                     : "bg-gray-300 cursor-not-allowed"
+//                 } text-white rounded-lg`}
+//                 disabled={!rating}
+//               >
+//                 {hasReviewed ? "Update Review" : "Submit Review"}
+//               </button>
+//               <button
+//                 onClick={() => {
+//                   setIsEditing(false);
+//                   setRating(null);
+//                 }}
+//                 className={`w-full max-w-[150px] h-8 text-xs font-medium ${
+//                   rating
+//                     ? "bg-red-500 hover:bg-red-700"
+//                     : "bg-gray-300 cursor-not-allowed"
+//                 } text-white rounded-lg`}
+//               >
+//                 Cancel
+//               </button>
+//             </form>
+//           </div>
+//         ) : (
+//           <></>
 //         )}
 //       </div>
 //     );
@@ -594,12 +611,20 @@ export default MovieDetails;
 //             <div className="flex justify-between">
 //               <p className="font-bold">User {review.userID}:</p>
 //               {review.userID === userID && (
-//                 <button
-//                   onClick={(e) => handleDeleteReview(review.reviewID, e)}
-//                   className="text-red-500 hover:text-red-700 text-sm"
-//                 >
-//                   Delete
-//                 </button>
+//                 <div>
+//                   <button
+//                     onClick={() => setIsEditing(true)}
+//                     className="text-blue-500 hover:text-blue-700 text-sm mr-2"
+//                   >
+//                     Edit Review
+//                   </button>
+//                   <button
+//                     onClick={(e) => handleDeleteReview(review.reviewID, e)}
+//                     className="text-red-500 hover:text-red-700 text-sm"
+//                   >
+//                     Delete
+//                   </button>
+//                 </div>
 //               )}
 //             </div>
 //             <p>{review.review}</p>

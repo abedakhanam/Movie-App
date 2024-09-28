@@ -7,6 +7,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 export interface UserState {
   userID: number | null;
+  username: string | null;
   firstName: string | null;
   lastName: string | null;
   token: string | null;
@@ -16,6 +17,7 @@ export interface UserState {
 
 export const initialState: UserState = {
   userID: null,
+  username: "",
   firstName: null,
   lastName: "",
   token: null,
@@ -35,6 +37,7 @@ const userSlice = createSlice({
     ) => {
       // console.log(`${action.payload.userID}`);
       state.userID = action.payload.userID;
+      state.username = action.payload.username;
       state.firstName = action.payload.firstName;
       state.lastName = action.payload.lastName;
       state.token = action.payload.token;

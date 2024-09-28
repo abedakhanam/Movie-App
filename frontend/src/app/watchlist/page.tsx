@@ -51,9 +51,9 @@ export default function WatchlistPage() {
   return (
     <div className="container mx-auto p-4">
       <ToastContainer autoClose={1000} />
-      <h1 className="text-3xl font-bold mb-6 text-white">Your Watchlist</h1>
+      <h1 className="text-3xl font-bold mb-6 text-white">Your Favorites</h1>
       {watchlist.length === 0 ? (
-        <p className="text-lg text-gray-500">Your watchlist is empty.</p>
+        <p className="text-lg text-gray-500">Your favorites is empty.</p>
       ) : (
         <ul className="space-y-6">
           {watchlist.map((movie) => (

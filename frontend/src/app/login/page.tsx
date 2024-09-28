@@ -43,13 +43,14 @@ export default function LoginPage() {
       if (!response) {
         console.log("no response");
       } else {
-        const { userID, firstName, lastName, token, email } = response.data;
+        const { userID, username, firstName, lastName, token, email } = response.data;
         console.log(response.data);
 
         // Dispatch the login action
         dispatch(
           login({
             userID,
+            username,
             firstName,
             lastName,
             token,

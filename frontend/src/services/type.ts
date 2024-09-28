@@ -4,6 +4,10 @@ export interface Review {
   rating: number;
   review: string;
   createdAt: string;
+  User: { username: string };
+}
+export interface Genre {
+  genreName: string;
 }
 export interface Movie {
   movieID: number;
@@ -22,4 +26,5 @@ export interface Movie {
   frightening: string;
   description: string | null;
   Reviews: Review[];
+  Genres: Genre[];
 }
