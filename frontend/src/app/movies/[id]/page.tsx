@@ -35,7 +35,7 @@ const MovieDetails = () => {
         try {
           const movieData = await getMovieDetails(Number(movieID));
           setMovie(movieData.movie);
-          console.log(username);
+          // console.log(username);
           // Check if the user has already reviewed
           const existingReview = movieData.movie.Reviews.find(
             (r: Review) => r.userID === userID
@@ -55,7 +55,7 @@ const MovieDetails = () => {
       };
       fetchMovieDetails();
     }
-  }, [movieID, userID]);
+  }, [movieID, userID, movie]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -234,10 +234,10 @@ const MovieDetails = () => {
 
       <div className="flex flex-wrap gap-4 mb-2">
         <div className="bg-gray-300 px-4 py-2 rounded-lg">
-          <strong>Rating:</strong> {rating ? rating : movie.rating}
+          <strong>Rating:</strong> {movie.rating.toFixed(1)}
         </div>
         <div className="bg-gray-300 px-4 py-2 rounded-lg">
-          <strong>Votes:</strong> {rating ? movie.votes + 1 : movie.votes}
+          <strong>Votes:</strong> {movie.votes}
         </div>
         <div className="bg-gray-300 px-4 py-2 rounded-lg">
           <strong>Duration:</strong> {movie.duration} minutes
@@ -329,12 +329,75 @@ const MovieDetails = () => {
 
 export default MovieDetails;
 
+{
+  /* <div className=" border-l-2 border-gray-500 pl-4">
+<h2 className="text-xl font-bold mb-4 text-white">Your Movies</h2>
+{movies.length > 0 ? (
+  <div className="space-y-4 bg-third p-2 shadow-lg rounded-lg">
+    {movies.map((movie) => (
+      <div
+        key={movie.movieID}
+        onClick={() => goToDetails(movie.movieID)}
+        className="flex items-center justify-between bg-gray-500 shadow-lg hover:shadow-xl rounded-lg p-3 transition-shadow duration-300 ease-in-out"
+      >
+        <div className="flex items-center">
+          {movie.thumbnailUrl ? (
+            <img
+              src={
+                movie.thumbnailUrl.startsWith("http")
+                  ? movie.thumbnailUrl
+                  : `http://localhost:5000${movie.thumbnailUrl}`
+              }
+              alt={`${movie.name} thumbnail`}
+              className="w-16 h-24 object-cover rounded-lg mr-5 shadow-md hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="no-thumbnail">
+              <p>No Thumbnail Available</p>
+            </div>
+          )}
+          <div>
+            <h3 className="text-xl text-white font-semibold">
+              {movie.name}
+            </h3>
+            <p className="text-white text-xs">
+              Release Year: {movie.releaseYear}
+            </p>
+            <p className="text-xs text-white">
+              <span className="inline text-yellow-500">★</span>
+              {movie.rating > 0 ? `${movie.rating}/10` : "N/A"}
+            </p>
+          </div>
+        </div>
+        <div className="text-right">
+          <button
+            onClick={(e) => handleEdit(e, movie)}
+            className="text-yellow-400 hover:text-yellow-200 px-1 py-1 mb-2 rounded"
+          >
+            Edit
+          </button>
+          <button
+            onClick={(e) => handleDelete(e, movie.movieID)}
+            className="text-red-400 hover:text-red-200  px-1 py-1 rounded"
+          >
+            Delete
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+) : (
+  <p className="text-gray-400">No movies created yet.</p>
+)}
+</div> */
+}
+
 ///
 //
 //
 //
 //
-//without username & genre
+//fixed 5pm saturday
 // "use client";
 // import LoaderSpinner from "@/components/LoaderSpinner";
 // import { deleteReview, getMovieDetails, postReview } from "@/services/api";
@@ -361,6 +424,7 @@ export default MovieDetails;
 
 //   const token = useSelector((state: RootState) => state.user.token);
 //   const userID = useSelector((state: RootState) => state.user.userID);
+//   const username = useSelector((state: RootState) => state.user.username);
 //   const isFetching = useRef(false); //for repeat api call
 
 //   useEffect(() => {
@@ -370,10 +434,8 @@ export default MovieDetails;
 //         isFetching.current = true;
 //         try {
 //           const movieData = await getMovieDetails(Number(movieID));
-//           // console.log(
-//           //   `getmoviedetails ${JSON.stringify(movieData.movie.description)}`
-//           // );
 //           setMovie(movieData.movie);
+//           console.log(username);
 //           // Check if the user has already reviewed
 //           const existingReview = movieData.movie.Reviews.find(
 //             (r: Review) => r.userID === userID
@@ -555,12 +617,18 @@ export default MovieDetails;
 //           alt={movie.name}
 //           className="w-48 h-auto rounded-lg"
 //         />
-//         <div>
-//           <h1 className="text-4xl font-bold mb-2 text-white">
-//             {movie.name}{" "}
-//             <span className="text-xl font-normal">({movie.releaseYear})</span>
-//           </h1>
-//           <p className="text-sm text-white">{movie.description}</p>
+//         <div className="flex flex-col">
+//           <div className="pb-6 mb-6">
+//             <h1 className="text-4xl font-bold mb-2 text-white">
+//               {movie.name}{" "}
+//               <span className="text-xl font-normal">({movie.releaseYear})</span>
+//             </h1>
+//             <p className="text-sm text-white">{movie.description}</p>
+//           </div>
+//           <div className="text-sm text-white">
+//             <strong>Genres: </strong>
+//             {movie.Genres.map((genre) => genre.genreName).join(", ")}
+//           </div>
 //         </div>
 //       </div>
 
@@ -609,7 +677,9 @@ export default MovieDetails;
 //             className="bg-gray-300 p-4 rounded-lg mb-4"
 //           >
 //             <div className="flex justify-between">
-//               <p className="font-bold">User {review.userID}:</p>
+//               <p className="font-bold">
+//                 {review.User ? review.User.username : username}:
+//               </p>
 //               {review.userID === userID && (
 //                 <div>
 //                   <button
