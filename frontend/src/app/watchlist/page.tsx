@@ -102,7 +102,10 @@ export default function WatchlistPage() {
                         </p>
                         <p className="text-sm text-gray-500">
                           <span className="inline text-yellow-500">★</span>
-                          {movie.Movie.rating.toFixed(1) || "N/A"}
+                          {movie.Movie.rating !== null &&
+                          movie.Movie.rating !== undefined
+                            ? movie.Movie.rating.toFixed(1)
+                            : "N/A"}
                         </p>
                       </div>
                     </div>
