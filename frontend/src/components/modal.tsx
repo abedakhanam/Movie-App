@@ -16,11 +16,11 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-lg p-4 w-96">
+      <div className="bg-gray-400 rounded-lg shadow-lg p-4 w-96">
         <h2 className="text-xl font-semibold mb-4">Are you sure?</h2>
         <div className="flex justify-end space-x-4">
           <button
-            className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-black rounded-md"
+            className="px-4 py-2 bg-gray-200 hover:bg-gray-300 text-black rounded-md"
             onClick={onClose}
           >
             Cancel

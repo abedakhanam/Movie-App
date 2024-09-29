@@ -247,7 +247,10 @@ const MovieDetails = () => {
 
       <div className="flex flex-wrap gap-4 mb-2">
         <div className="bg-gray-300 px-4 py-2 rounded-lg">
-          <strong>Rating:</strong> {movie.rating.toFixed(1)}
+          <strong>Rating:</strong>{" "}
+          {movie.rating !== null && movie.rating !== undefined
+            ? movie.rating.toFixed(1)
+            : "N/A"}
         </div>
         <div className="bg-gray-300 px-4 py-2 rounded-lg">
           <strong>Votes:</strong> {movie.votes}

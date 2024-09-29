@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import {
+import sequelize, {
   Genre,
   Movie,
   MovieGenre,
@@ -17,6 +17,7 @@ import multer from "multer";
 import { upload } from "../helpers/multer";
 import { Client as ElasticsearchClient } from "@elastic/elasticsearch";
 import { GenreAttributes } from "../models/Genre";
+import { MovieAttributes } from "../models/Movie";
 
 // Elasticsearch client setup
 const esClient = new ElasticsearchClient({
@@ -1090,6 +1091,72 @@ const deleteMovie = async (req: Request, res: Response) => {
 //
 
 //one movie details + reviews
+//works but slow
+// const getMoviebyPK = async (req: Request, res: Response) => {
+//   try {
+//     const { id } = req.params;
+
+//     // Fetch the current movie details with reviews and genres
+//     const movie = await Movie.findByPk(id, {
+//       include: [
+//         {
+//           model: Review,
+//           attributes: ["reviewID", "userID", "rating", "review", "createdAt"],
+//           include: [
+//             {
+//               model: User,
+//               attributes: ["username"],
+//             },
+//           ],
+//         },
+//         {
+//           model: Genre,
+//           through: { attributes: [] }, // Prevents the junction table attributes from being returned
+//           attributes: ["genreName"],
+//         },
+//       ],
+//     });
+
+//     if (!movie) return res.status(400).json({ message: "Movie not found" });
+
+//     // Cast the movie result to MovieWithGenres
+//     const movieWithGenres = movie as any;
+
+//     // Extract the genre names of the current movie
+//     const genres = movieWithGenres.Genres.map((genre: any) => genre.genreName);
+
+//     // Fetch 6 random movies with at least one matching genre
+//     const randomMovies = await Movie.findAll({
+//       where: {
+//         movieID: { [Op.ne]: id }, // Exclude the current movie
+//       },
+//       include: [
+//         {
+//           model: Genre,
+//           attributes: [],
+//           where: {
+//             genreName: {
+//               [Op.in]: genres, // Match genres with the current movie
+//             },
+//           },
+//         },
+//       ],
+//       attributes: ["movieID", "name", "thumbnailUrl", "rating"],
+//       order: sequelize.random(), // Get random movies
+//       limit: 6,
+//     });
+
+//     // Respond with movie details and random movies
+//     res.status(200).json({
+//       message: "get movie details successful",
+//       movie,
+//       randomMovies,
+//     });
+//   } catch (error) {
+//     return res.status(400).json({ message: "failed to fetch movie" });
+//   }
+// };
+//okay code plus username
 const getMoviebyPK = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
