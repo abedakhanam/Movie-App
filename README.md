@@ -94,7 +94,7 @@ The frontend of the Movie Review App is built with Next.js, TypeScript, and Tail
 
 #### Overview
 
-The backend of the Movie Review App provides a RESTful API to handle user authentication, movie management, reviews, and favorite list. It is built with Express.js and TypeScript, using PostgreSQL as the database with Sequelize ORM, and incorporates Elasticsearch for advanced searching capabilities. Images are stored locally using Multer, with compression handled by Sharp.
+The backend of the Movie Review App is built with Express.js and TypeScript, using PostgreSQL with Sequelize ORM for database management. Elasticsearch powers the advanced search functionality, and Multer with Sharp is used for image uploads and compression.
 
 #### Features
 
@@ -105,11 +105,24 @@ The backend of the Movie Review App provides a RESTful API to handle user authen
 - Search: Elasticsearch-powered full-text search and filtering.
 - Image Uploads: Upload and compress images using Multer and Sharp.
 
+#### Data Scalability and Performance Improvements
+Initially, the app used direct database queries, and the dataset consisted of approximately 6,000 records. To simulate a data-intensive environment, Faker.js was used to generate 1 million fake records, which significantly slowed down the infinite scroll on the homepage (response time: 2–3 seconds).
+
+After integrating Elasticsearch, the response time dropped to approximately 80 milliseconds, drastically improving the user experience.
+
 #### Database Design
 
 Below is the Entity Relationship Diagram (ERD) used for the application:
 ![alt text](erd.png)
 Note: The ERD includes key tables such as User, Movie, Review, Genre, and associations like MovieGenre, WatchList (favorite in frontend), and UserMovie.
+
+##### Key Tables and Relationships
+- User: Stores user details.
+- Movie: Contains movie metadata.
+- Review: Captures user reviews and ratings for movies.
+- Genre: Defines movie genres.
+- MovieGenre: Maps movies to their respective genres.
+- Watchlist: Stores user-specific favorite movies.
 
 #### API Endpoints
 ##### User Routes (/api/users)
@@ -190,6 +203,6 @@ Movies are indexed in Elasticsearch for fast and efficient search. The `getAllMo
 
 ## Future Enhancements
 
-    Cloud Storage: Move image storage to a cloud provider (e.g., Cloudinary).
-    Analytics: Add analytics for user and movie data.
-    Social Features: Allow users to follow each other and share watchlists(fav).
+- Cloud Storage: Move image storage to a cloud provider (e.g., Cloudinary).
+- Analytics: Add analytics for user and movie data.
+- Social Features: Allow users to follow each other and share watchlists(fav).
